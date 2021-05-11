@@ -30,4 +30,7 @@ def getId(kalender):
             return calendar_list_entry.get('id')
 
 #getId('jaEndlich')
+
 googleConnection()
+#Kommentar:Minh ist der beste!
+#sdölkfgölsfd

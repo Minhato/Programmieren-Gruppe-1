@@ -32,3 +32,4 @@ def getId(kalender):
 #getId('jaEndlich')
 
 googleConnection()
+#Kommentar:Minh ist der beste!

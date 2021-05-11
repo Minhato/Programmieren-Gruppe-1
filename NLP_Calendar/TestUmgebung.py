@@ -1,21 +1,25 @@
 import GoogleAPIConnection as goc
 import datetime
-def terminAnlegen(jahr, monat, tag, startStunde, startMinute):
+def test(jahr, monat, tag, startStunde, startMinute):
+   startZeit = datetime.datetime(jahr, monat, tag, startStunde, startMinute)
+   print(startZeit)
+test(2021,4,19,15,20)
+def terminAnlegen(jahr, monat, tag, startStunde, startMinute, endStunde, endMinute, summary, description):
     """ Zum Anlegen eines neuen Termin (Minh) """
     startZeit = datetime.datetime(jahr, monat, tag, startStunde, startMinute)
     endZeit = datetime.datetime(jahr,monat,tag,)
 
 
     event = {
-    'summary': 'Was ist los',
+    'summary': summary,
     'location': '800 Howard St., San Francisco, CA 94103',
-    'description': 'A chance to hear more about Google\'s developer products.',
+    'description': description,
     'start': {
-    'dateTime': '2021-05-09T21:00:00',
+    'dateTime': startZeit,
     'timeZone': 'Europe/Berlin',
   },
     'end': {
-    'dateTime': '2021-05-09T22:00:00',
+    'dateTime': endZeit,
     'timeZone': 'Europe/Berlin',
   },
 #     'recurrence': [
@@ -34,5 +38,3 @@ def terminAnlegen(jahr, monat, tag, startStunde, startMinute):
     id = goc.getId("TestKalender")
     event = goc.service.events().insert(calendarId=id, body=event).execute()
     print ('Event created: %s' % (event.get('htmlLink')))
-#TO:DO parameter 
-terminAnlegen()

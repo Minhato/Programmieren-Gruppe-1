@@ -1,7 +1,11 @@
 import GoogleAPIConnection as goc
-
-def terminAnlegen():
+import datetime
+def terminAnlegen(jahr, monat, tag, startStunde, startMinute):
     """ Zum Anlegen eines neuen Termin (Minh) """
+    startZeit = datetime.datetime(jahr, monat, tag, startStunde, startMinute)
+    endZeit = datetime.datetime(jahr,monat,tag,)
+
+
     event = {
     'summary': 'Was ist los',
     'location': '800 Howard St., San Francisco, CA 94103',

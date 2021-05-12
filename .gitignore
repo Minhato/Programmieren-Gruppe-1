@@ -3,3 +3,6 @@ calendar.dat
 NLP_Calendar/client_secrets.json
 Daans locale Dateien/client_secrets _daan.json
 
+calendar.dat
+NLP_Calendar/__pycache__/GoogleAPIConnection.cpython-39.pyc
+.vscode/settings.json

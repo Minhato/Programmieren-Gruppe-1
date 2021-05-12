@@ -38,4 +38,14 @@ def terminAnlegen(jahr, monat, tag, startStunde, startMinute, endStunde, endMinu
     event = goc.service.events().insert(calendarId=id, body=event).execute()
     print ('Event created: %s' % (event.get('htmlLink')))
 
-terminAnlegen(2021,5,11,22,0,23,0,'test eintrag', 'hat ja gut funktioniert')
+# terminAnlegen(2021,5,11,22,0,23,0,'test eintrag', 'hat ja gut funktioniert')
+def terminanzeigen():
+  #result = goc.service.calendarList().list().execute()
+
+  events = goc.service.events().list(calendarId= goc.getId('TestKalender')).execute()
+ # print(events['items'])
+  for event in events['items']:
+    #print(event.get('start')['dateTime'])
+    if event.get('start')['dateTime'] == '2021-05-12T13:30:00+02:00':
+      print( event.get('summary')+ " am " + event.get('start')['dateTime'])
+terminanzeigen()

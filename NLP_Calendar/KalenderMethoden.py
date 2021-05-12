@@ -3,7 +3,7 @@ import sys
 from oauth2client import client
 from googleapiclient import sample_tools
 import GoogleAPIConnection as gac
-
+  
 def setKalender(kalenderName):
   """Zum erstellen eines neuen Kalender (Minh)"""
   gac.googleConnection()

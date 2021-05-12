@@ -31,6 +31,6 @@ def getId(kalender):
 
 #getId('jaEndlich')
 
-googleConnection()
+#googleConnection()
 #Kommentar:Minh ist der beste!
 #sdölkfgölsfd

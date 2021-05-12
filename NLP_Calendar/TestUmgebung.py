@@ -4,15 +4,14 @@ def test(jahr, monat, tag, startStunde, startMinute):
    startZeit = datetime.datetime(jahr, monat, tag, startStunde, startMinute)
    print(startZeit)
 test(2021,4,19,15,20)
+
 def terminAnlegen(jahr, monat, tag, startStunde, startMinute, endStunde, endMinute, summary, description):
     """ Zum Anlegen eines neuen Termin (Minh) """
-    startZeit = datetime.datetime(jahr, monat, tag, startStunde, startMinute)
-    endZeit = datetime.datetime(jahr,monat,tag,)
-
-
+    startZeit = str(datetime.datetime(jahr, monat, tag, startStunde, startMinute))
+    endZeit = str(datetime.datetime(jahr,monat,tag,))
     event = {
     'summary': summary,
-    'location': '800 Howard St., San Francisco, CA 94103',
+    #'location': '800 Howard St., San Francisco, CA 94103',
     'description': description,
     'start': {
     'dateTime': startZeit,
@@ -38,3 +37,5 @@ def terminAnlegen(jahr, monat, tag, startStunde, startMinute, endStunde, endMinu
     id = goc.getId("TestKalender")
     event = goc.service.events().insert(calendarId=id, body=event).execute()
     print ('Event created: %s' % (event.get('htmlLink')))
+
+terminAnlegen(2021,5,11,22,0,23,0,'test eintrag', 'hat ja gut funktioniert')

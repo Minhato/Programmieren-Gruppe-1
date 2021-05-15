@@ -3,7 +3,6 @@ import datetime
 def test(jahr, monat, tag, startStunde, startMinute):
    startZeit = str(datetime.datetime(jahr, monat, tag, startStunde, startMinute)).replace(" ","T")
    print("startzeit",startZeit)
-test(2021,4,19,15,20)
 
 #Termin löschen funktioniert iwie nicht mehr, nur ein Eintrag wird angezeigt
 def terminloeschen(jahr,monat,tag,startStunde,startMinute):
@@ -24,3 +23,7 @@ def terminloeschen(jahr,monat,tag,startStunde,startMinute):
 
 #terminAnlegen(2021,5,14,16,0,18,0,'es geht','ez')
 #terminloeschen(2021,5,14,16,0)
+
+
+testen(2021,5,14,15,00)
+

@@ -1,4 +1,5 @@
 #Google API Connection
+import datetime
 from pprint import pprint
 import sys
 from oauth2client import client
@@ -29,8 +30,19 @@ def getId(kalender):
             print(calendar_list_entry.get('id'))
             return calendar_list_entry.get('id')
 
-#getId('jaEndlich')
+def getEventId(jahr, monat, tag, stunde, minute):
 
+    events = service.events().list(calendarId= getId('TestKalender')).execute()
+    startZeit = str(datetime.datetime(jahr, monat, tag, stunde, minute)).replace(" ","T")
+    print(startZeit)
+    for event in events['items']:
+        print(event['summary'])
+        print(event['start']['dateTime'])
+        if startZeit in  event['start']['dateTime']:
+            eventID= event['id']
+    return eventID
+#getId('jaEndlich')
+print("event ID",getEventId(2021,5,13,13,30))
 #googleConnection()
 #Kommentar:Minh ist der beste!
 #sdölkfgölsfd

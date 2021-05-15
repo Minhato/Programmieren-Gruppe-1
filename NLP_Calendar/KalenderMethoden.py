@@ -4,7 +4,7 @@ import sys
 from oauth2client import client
 from googleapiclient import sample_tools
 import GoogleAPIConnection as gac
-  
+
 def setKalender(kalenderName):
   """Zum erstellen eines neuen Kalender (Minh)"""
   gac.googleConnection()
@@ -65,6 +65,7 @@ def terminanzeigen(jahr, monat, tag,):
       print( event.get('summary')+ " um " + event.get('start')['dateTime'])
 
 def terminBearbeiten(jahr,monat,tag,stunde,minute,titel):
+  """Zum Termin Bearbeiten  """
   event = gac.service.events().get(calendarId=gac.getId('TestKalender'), eventId=gac.getEventId(jahr,monat,tag,stunde,minute)).execute()
   event['summary'] = titel
   updatedEvent = gac.service.events().update(calendarId = gac.getId('TestKalender'), eventId= event['id'], body = event).execute()

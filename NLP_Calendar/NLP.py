@@ -8,7 +8,6 @@ from datetime import*
 nlp=spacy.load("de_core_news_sm")
 matcher=Matcher(nlp.vocab)
 
-
 text="Hier steht unser Testsatz"
 bereinigt=" ".join([token.text for token in doc if not token.is_stop and not token.is_punct])
 #Doc ist text als Spacy Doc Objekt
@@ -23,7 +22,6 @@ def getTokenList():
         if(token.is_stop == False or token.pos_=="NOUN"):
             tokenListe.append(token.lemma_)
     print(tokenListe)
-    
     
 def checkActionKind():
     #Dursucht Satz nach Entität für Art der Anlage
@@ -123,8 +121,9 @@ def getLocation():
             print("Der Termin soll hier stattfinden"+ent.text)
             
 
-
-
+def getTitel():
+    
+    pass
 
  #UserEvent checkt welche Infos vom User schon gegeben wurden           
 userEvent={

@@ -74,6 +74,38 @@ def getIntend(kindOfRequest):
 
 
 
+
+
+
+def calculateWithWeekdays(requestedWeekday):
+    myVar=date.weekday(date.today())
+    while(myVar == requestedWeekday):
+        
+        myVar=date.weekday(date.today()+timedelta(days=1))
+    return myVar
+
+
+
+def getDatum(erkannterTag):
+    heute=date.today()
+    
+    
+    possibleDate={
+        "heute":heute,
+        "morgen":heute+timedelta(days=1),
+        "übermorgen":heute+timedelta(days=2),
+        "Montag":heute+timedelta(days=calculateWithWeekdays(0)),
+        "Dienstag":heute+timedelta(days=calculateWithWeekdays(1)),
+        "Mittwoch":heute+timedelta(days=calculateWithWeekdays(2)),
+        "Donnerstag":heute+timedelta(days=calculateWithWeekdays(3)),
+        "Freitag":heute+timedelta(days=calculateWithWeekdays(4)),
+        "Samstag":heute+timedelta(days=calculateWithWeekdays(5)),
+        "Sonntag":heute+timedelta(days=calculateWithWeekdays(6))
+    }
+    return possibleDate.get(erkannterTag)
+    
+
+print("Tag ist:",getDatum("Montag")) 
 def getLocation():
     #UNFINISHED Soll Location des Termins Liefern falls Vorhanden
     for ent in doc.ents:
@@ -82,13 +114,6 @@ def getLocation():
             return ent.text
             print("Der Termin soll hier stattfinden"+ent.text)
             
-def getDatum():
-    #UNFINISHED Soll Datum des Termins liefern
-    today = date.today()
-    for token in doc:
-        if(token.text=="heute"):
-            return str(today)
-
 
 
 

@@ -77,12 +77,20 @@ def getIntend(kindOfRequest):
 
 
 
-def calculateWithWeekdays(requestedWeekday):
-    myVar=date.weekday(date.today())
-    while(myVar == requestedWeekday):
+def calculateWithWeekdays(gefragterTag):
+    """Gibt für einen gewünschten Wochentag das entsprechende Datum zurück"""
+    #Wochentag zum iterieren über die while Schleife
+    wochentagHeute=date.weekday(date.today())
+    zwischenErgebnis=date.today()
+    #statisches Startdatum
+    startDatum=date.weekday(date.today())
+
+    while(wochentagHeute != gefragterTag):
         
-        myVar=date.weekday(date.today()+timedelta(days=1))
-    return myVar
+        zwischenErgebnis=zwischenErgebnis+timedelta(days=1)
+        
+        wochentagHeute=date.weekday(zwischenErgebnis)
+    return date.today()+timedelta(days=wochentagHeute-startDatum)
 
 
 
@@ -105,7 +113,7 @@ def getDatum(erkannterTag):
     return possibleDate.get(erkannterTag)
     
 
-print("Tag ist:",getDatum("Montag")) 
+print(calculateWithWeekdays(6)) 
 def getLocation():
     #UNFINISHED Soll Location des Termins Liefern falls Vorhanden
     for ent in doc.ents:

@@ -9,10 +9,11 @@ from re import*
 nlp=spacy.load("de_core_news_sm")
 matcher=Matcher(nlp.vocab)
 
-text="Hier steht unser Testsatz"
-bereinigt=" ".join([token.text for token in doc if not token.is_stop and not token.is_punct])
+text="Lege einen Termin um 14 Uhr bis 14:30 an"
 #Doc ist text als Spacy Doc Objekt
 doc =  nlp(text)
+bereinigt=" ".join([token.text for token in doc if not token.is_stop and not token.is_punct])
+
 #Doc mit entfernten Stopwords
 noStopwordDoc=nlp(bereinigt)
 
@@ -183,14 +184,22 @@ def getTitel():
         print("Keinen Titel gefunden was wollen Sie als Titel haben?")
         #input bla bla into Titel
 
-
+def getUhrzeit():
+    uhrzeiten= []
+    for token in doc:
+        print(token.shape_)
+        if token.shape_ == "dd:dd" or token.shape_ == "dd":
+            uhrzeiten.append(token.text)
+            print("ja existiert", token.text)
+    print(uhrzeiten)
+getUhrzeit()
  #UserEvent checkt welche Infos vom User schon gegeben wurden           
-userEvent={
-    "eventKind" : checkActionKind(),
-    "intend" : getIntend(checkActionKind()),
-    "Datum":getDatum(),
-    "Zeit":"testZeit",
-    "Ort": getLocation(),
-    "Aktivität":"Testaktivität",
-    "Erinnerung":True,
-}
+# userEvent={
+#     "eventKind" : checkActionKind(),
+#     "intend" : getIntend(checkActionKind()),
+#     "Datum":getDatum(),
+#     "Zeit":"testZeit",
+#     "Ort": getLocation(),
+#     "Aktivität":"Testaktivität",
+#     "Erinnerung":True,
+# }

@@ -9,7 +9,7 @@ from re import*
 nlp=spacy.load("de_core_news_sm")
 matcher=Matcher(nlp.vocab)
 
-text="Lege einen Termin um 14 Uhr bis 14:30 an"
+text="Lege einen nächste Woche Sonntag an"
 #Doc ist text als Spacy Doc Objekt
 doc =  nlp(text)
 bereinigt=" ".join([token.text for token in doc if not token.is_stop and not token.is_punct])
@@ -191,7 +191,7 @@ def getDateText(doc):
             if(len(userDatum)<10):
                 userDatum=userDatum[1:]
             return userDatum
-print(getDate(getDateText(doc)))
+
 
  
 
@@ -231,7 +231,7 @@ def getUhrzeit():
             uhrzeiten.append(token.text)
             print("ja existiert", token.text)
     print(uhrzeiten)
-getUhrzeit()
+print(getDatum(getDateText(doc)))
  #UserEvent checkt welche Infos vom User schon gegeben wurden           
 # userEvent={
 #     "eventKind" : checkActionKind(),

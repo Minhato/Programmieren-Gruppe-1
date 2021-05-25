@@ -92,12 +92,13 @@ def calculateWithWeekdays(requestedWeekday):
         weekdayToday=date.weekday(calculatedDate)
     return calculatedDate
 
-def getDatum(regognizedDay):
-    """Verarbeitet vom Nutzer eingegebenen Text der sich auf das Datum bezieht und gibt errechnetes Wunschdatum zurück"""
+def getDatum(erkannterTag):
     #heutigesDatum
     heute=date.today()
     #globale Variable datumNextWeek in die Ergebis der Methode getDateNextWeek gespeichert wird,die in der for schleife der erkannten patterns aufgerufen wird
     datumNextWeek=date.today()
+    #aus Parameter wird NLP objekt erstellt
+    datumNlp =nlp(erkannterTag)
     #patterns
     patterns=[
         [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?" },{"TEXT":{"REGEX":"\w*tag\b"}}],
@@ -107,10 +108,9 @@ def getDatum(regognizedDay):
     ]
     #Matcher wird inizialisiert
     matcher.add("Weekdays",patterns)
-    testDoc= nlp(regognizedDay)
+    testDoc= nlp(erkannterTag)
     matches= matcher(testDoc)
-
-    #Dictonary zur Abrage des Datums je nach Case
+    
     possibleDate={
         "heute":heute,
         "morgen":heute+timedelta(days=1),
@@ -123,7 +123,7 @@ def getDatum(regognizedDay):
         "Samstag":calculateWithWeekdays(5),
         "Sonntag":calculateWithWeekdays(6)
     }
-    #Methode getDateNextWeek wird aufgerufen wenn pattern gematched wird,manipuliert wenn nötig Dictonaryabfrage um 7
+    #Methode getDateNextWeek wird aufgerufen wenn pattern gematched wird
     def getDateNextWeek(spanText):
         WeekdayNextWeek = spanText.replace("nächsten","").replace("nächste","").replace("Woche","").replace(" ","")
         if(heute.weekday()<=possibleDate[WeekdayNextWeek].weekday()):
@@ -131,7 +131,7 @@ def getDatum(regognizedDay):
         else:
             return possibleDate[WeekdayNextWeek]
     
-    #for Schleife die für Pattern match getDateNextWeek aufruft und globaler Variable datumNextWeek zuweißt
+    #for Schleife die für Pattern match getDateNextWeek aufruft
     
     for match_id,start,end in matches:
         string_id=nlp.vocab.strings[match_id]            
@@ -140,19 +140,58 @@ def getDatum(regognizedDay):
         datumNextWeek=getDateNextWeek(span.text)
     
     
+    
     #return der getDatum Methode
+    #deutsches Datum->return des Formatieren Datums
     #Leeres Array==Kein Pattern gefunden->normaler aufruf über dictonary
     #else->Aufruf der globalen Variable datumNextWeek in die Datum für die nächste Woche gespeichert wurde
+    for token in datumNlp:
+        if token.shape_=="dd.dd.dddd":
+            #Platz zum formatieren des Datums zum google api Standart
+            return token.text
     if(matches==[]):
-        return possibleDate.get(regognizedDay)
+        
+        return possibleDate.get(erkannterTag)
     else:
         return datumNextWeek
-   
-        
-    
-            
-print(getDatum("nächste Woche Freitag"))
 
+def getDateText(doc):
+    Wochentage=["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"]
+    MonateValue={
+        "Jannuar":"01",
+        "Februar":"02",
+        "März":"03",
+        "April":"04",
+        "Mai":"05",
+        "Juni":"06",
+        "Juli":"07",
+        "August":"08",
+        "September":"09",
+        "Oktober":"10",
+        "November":"11",
+        "Dezember":"12"
+    }
+    userDatum =""
+    for token in doc:
+        if token.shape_=="dd."or token.shape_=="d." and token.head.text in MonateValue:
+            tag=token.text
+            if token.shape_=="d.":
+                tag="0"+tag
+            monat=MonateValue[token.head.text]
+            jahr=datetime.now().year
+            userDatum=tag+monat+"."+str(jahr)
+            return userDatum
+        elif token.shape_=="dd.dd.dddd":
+            userDatum=token.text
+            return token.text
+        elif token.lemma_=="nächst" or token.text=="Woche":
+            userDatum=" ".join([userDatum,token.text])
+        elif token.text in Wochentage:
+            userDatum=" ".join([userDatum,token.text])
+            if(len(userDatum)<10):
+                userDatum=userDatum[1:]
+            return userDatum
+print(getDate(getDateText(doc)))
 
  
 

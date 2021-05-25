@@ -3,6 +3,7 @@ from spacy.matcher import Matcher
 from spacy.matcher import PhraseMatcher
 from spacy import displacy
 from datetime import*
+from re import*
 
 #Korpus laden
 nlp=spacy.load("de_core_news_sm")
@@ -76,34 +77,84 @@ def getIntend(kindOfRequest):
 
 
 def calculateWithWeekdays(requestedWeekday):
-    myVar=date.weekday(date.today())
-    while(myVar == requestedWeekday):
+    """Gibt für einen gewünschten Wochentag das entsprechende Datum zurück"""
+    #Wochentag zum iterieren über die while Schleife
+    weekdayToday=date.weekday(date.today())
+    calculatedDate=date.today()
+    #statisches Startdatum
+    startDatum=date.weekday(date.today())
+
+    while(weekdayToday != requestedWeekday):
         
-        myVar=date.weekday(date.today()+timedelta(days=1))
-    return myVar
+        calculatedDate=calculatedDate+timedelta(days=1)
+        
+        weekdayToday=date.weekday(calculatedDate)
+    return calculatedDate
 
-
-
-def getDatum(erkannterTag):
+def getDatum(regognizedDay):
+    """Verarbeitet vom Nutzer eingegebenen Text der sich auf das Datum bezieht und gibt errechnetes Wunschdatum zurück"""
+    #heutigesDatum
     heute=date.today()
-    
-    
+    #globale Variable datumNextWeek in die Ergebis der Methode getDateNextWeek gespeichert wird,die in der for schleife der erkannten patterns aufgerufen wird
+    datumNextWeek=date.today()
+    #patterns
+    patterns=[
+        [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?" },{"TEXT":{"REGEX":"\w*tag\b"}}],
+        [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?" },{"TEXT":"Mittwoch"}]
+        
+        
+    ]
+    #Matcher wird inizialisiert
+    matcher.add("Weekdays",patterns)
+    testDoc= nlp(regognizedDay)
+    matches= matcher(testDoc)
+
+    #Dictonary zur Abrage des Datums je nach Case
     possibleDate={
         "heute":heute,
         "morgen":heute+timedelta(days=1),
         "übermorgen":heute+timedelta(days=2),
-        "Montag":heute+timedelta(days=calculateWithWeekdays(0)),
-        "Dienstag":heute+timedelta(days=calculateWithWeekdays(1)),
-        "Mittwoch":heute+timedelta(days=calculateWithWeekdays(2)),
-        "Donnerstag":heute+timedelta(days=calculateWithWeekdays(3)),
-        "Freitag":heute+timedelta(days=calculateWithWeekdays(4)),
-        "Samstag":heute+timedelta(days=calculateWithWeekdays(5)),
-        "Sonntag":heute+timedelta(days=calculateWithWeekdays(6))
+        "Montag":calculateWithWeekdays(0),
+        "Dienstag":calculateWithWeekdays(1),
+        "Mittwoch":calculateWithWeekdays(2),
+        "Donnerstag":calculateWithWeekdays(3),
+        "Freitag":calculateWithWeekdays(4),
+        "Samstag":calculateWithWeekdays(5),
+        "Sonntag":calculateWithWeekdays(6)
     }
-    return possibleDate.get(erkannterTag)
+    #Methode getDateNextWeek wird aufgerufen wenn pattern gematched wird,manipuliert wenn nötig Dictonaryabfrage um 7
+    def getDateNextWeek(spanText):
+        WeekdayNextWeek = spanText.replace("nächsten","").replace("nächste","").replace("Woche","").replace(" ","")
+        if(heute.weekday()<=possibleDate[WeekdayNextWeek].weekday()):
+            return possibleDate[WeekdayNextWeek]+timedelta(days=7)
+        else:
+            return possibleDate[WeekdayNextWeek]
     
+    #for Schleife die für Pattern match getDateNextWeek aufruft und globaler Variable datumNextWeek zuweißt
+    
+    for match_id,start,end in matches:
+        string_id=nlp.vocab.strings[match_id]            
+        span=testDoc[start:end]
+        print(span.text,match_id,start)
+        datumNextWeek=getDateNextWeek(span.text)
+    
+    
+    #return der getDatum Methode
+    #Leeres Array==Kein Pattern gefunden->normaler aufruf über dictonary
+    #else->Aufruf der globalen Variable datumNextWeek in die Datum für die nächste Woche gespeichert wurde
+    if(matches==[]):
+        return possibleDate.get(regognizedDay)
+    else:
+        return datumNextWeek
+   
+        
+    
+            
+print(getDatum("nächste Woche Freitag"))
 
-print("Tag ist:",getDatum("Montag")) 
+
+ 
+
 def getLocation():
     #UNFINISHED Soll Location des Termins Liefern falls Vorhanden
     for ent in doc.ents:
@@ -114,10 +165,6 @@ def getLocation():
             
 
 def getTitel():
-    # Rule based wo man den alles nach "Mit dem Titel" als Titel nimmt, evtl Intent am Ende entfernen
-    # wenn kein titel gefunden, dann nochmal nachfragen was titel sein soll und das dann nutzen
-    # PHRASE Matcher anschauen, das wahrscheinlich sinnvoller
-
     matcher=PhraseMatcher(nlp.vocab)
     term = ["titel"]
     patterns = [nlp.make_doc(text) for text in term]

@@ -9,7 +9,7 @@ from re import*
 nlp=spacy.load("de_core_news_sm")
 matcher=Matcher(nlp.vocab)
 
-text="Lege einen nächste Woche Sonntag an"
+text="Lege einen Termin für dienstag um 14 Uhr bis 14:30 mit dem Titel Hallo an"
 #Doc ist text als Spacy Doc Objekt
 doc =  nlp(text)
 bereinigt=" ".join([token.text for token in doc if not token.is_stop and not token.is_punct])
@@ -204,25 +204,28 @@ def getLocation():
             print("Der Termin soll hier stattfinden"+ent.text)
             
 
-def getTitel():
+def getTitel(text):
     matcher=PhraseMatcher(nlp.vocab)
     term = ["titel"]
     patterns = [nlp.make_doc(text) for text in term]
     print(patterns)
     matcher.add("titel", patterns)
     titel = None
-    doc = nlp("Erstelle ein Termin um 15 Uhr mit dem x ich muss kacken")
-    matches = matcher(doc)
-    print(matches)
+    doc = nlp(text)
+    lower_doc =  str(doc).lower()
+    matches = matcher(nlp(lower_doc))
+    print(matches, "type", type(matches))
 
     for match_id, start, end in matches:
+        print(match_id,start,end)
         titel = doc[end:len(doc)]
         print(titel.text)
+        return titel
 
     if not matches: 
         print("Keinen Titel gefunden was wollen Sie als Titel haben?")
         #input bla bla into Titel
-
+getTitel("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab")
 def getUhrzeit():
     uhrzeiten= []
     for token in doc:
@@ -231,7 +234,18 @@ def getUhrzeit():
             uhrzeiten.append(token.text)
             print("ja existiert", token.text)
     print(uhrzeiten)
-print(getDatum(getDateText(doc)))
+    return uhrzeiten
+#print(getDatum(getDateText(doc)))
+class Nlp(object):
+    def __init__(self,titel):
+        self.titel = titel
+    def __init__(self) -> None:
+        super().__init__()
+p = Nlp()
+p.titel = getTitel("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab")
+print(p.titel)
+
+#getUhrzeit()
  #UserEvent checkt welche Infos vom User schon gegeben wurden           
 # userEvent={
 #     "eventKind" : checkActionKind(),

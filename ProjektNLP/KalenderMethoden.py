@@ -68,8 +68,33 @@ def terminBearbeiten(jahr,monat,tag,stunde,minute,titel):
   """Zum Termin Bearbeiten  """
   event = gac.service.events().get(calendarId=gac.getId('TestKalender'), eventId=gac.getEventId(jahr,monat,tag,stunde,minute)).execute()
   event['summary'] = titel
+  print("dieZeit:"+ event['start']['dateTime'])
+  print("endzeit:"+ event['end']['dateTime'])
   updatedEvent = gac.service.events().update(calendarId = gac.getId('TestKalender'), eventId= event['id'], body = event).execute()
 
+#print("datetimeeeee "+ datetime.datetime.now().astimezone().replace(microsecond=0).isoformat())
+#terminBearbeiten(2021,6,2,19,0,"neue")
+
+
+def terminBearbeiten(jahr,monat,tag,stunde,minute,neueStunde,neueMinute,endStunde,endMinute):
+  """Zum Termin Bearbeiten nur mit neue Uhrzeit """
+  event = gac.service.events().get(calendarId=gac.getId('TestKalender'), eventId=gac.getEventId(jahr,monat,tag,stunde,minute)).execute()
+  event['start'] ['dateTime'] = datetime.datetime(jahr,monat,tag,neueStunde,neueMinute).astimezone().replace(microsecond=0).isoformat()
+  event['end'] ['dateTime'] = datetime.datetime(jahr,monat,tag,endStunde,endMinute).astimezone().replace(microsecond=0).isoformat()
+  print(event['start']['dateTime'])
+  updatedEvent = gac.service.events().update(calendarId = gac.getId('TestKalender'), eventId= event['id'], body = event).execute()
+
+#terminBearbeiten(2021,6,2,22,0,21,0,21,30)
+
+def terminBearbeiten(jahr,monat,tag,stunde,minute,neuJahr,neuMonat,neuTag,neueStunde,neueMinute,endStunde,endMinute):
+  """Zum Termin Bearbeiten nur mit neuen Datum """
+  event = gac.service.events().get(calendarId=gac.getId('TestKalender'), eventId=gac.getEventId(jahr,monat,tag,stunde,minute)).execute()
+  event['start'] ['dateTime'] = datetime.datetime(neuJahr,neuMonat,neuTag,neueStunde,neueMinute).astimezone().replace(microsecond=0).isoformat()
+  event['end'] ['dateTime'] = datetime.datetime(neuJahr,neuMonat,neuTag,endStunde,endMinute).astimezone().replace(microsecond=0).isoformat()
+  print(event['start']['dateTime'])
+  updatedEvent = gac.service.events().update(calendarId = gac.getId('TestKalender'), eventId= event['id'], body = event).execute()
+
+#terminBearbeiten(2021,6,2,21,0,2021,6,3,13,0,14,0)
 def terminloeschen(jahr,monat,tag,startStunde,startMinute):
   """Zum löschen eines Termin anhand des Datum und AnfangZeitpunkt (Minh) """
   events = gac.service.events().list(calendarId= gac.getId('TestKalender')).execute()
@@ -84,5 +109,5 @@ def terminloeschen(jahr,monat,tag,startStunde,startMinute):
      gac.service.events().delete(calendarId= gac.getId('TestKalender'), eventId= eventID).execute()
 
 #terminAnlegen(2021,6,2,13,00,14,0,"nlp","")
-terminloeschen(2021,6,2,13,0)
+#terminloeschen(2021,6,2,13,0)
 #terminBearbeiten(2021,6,2,13,0, "anderer Titel")

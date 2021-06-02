@@ -9,7 +9,8 @@ from re import*
 nlp=spacy.load("de_core_news_sm")
 matcher=Matcher(nlp.vocab)
 
-text="Lege einen Termin für dienstag um 14 Uhr bis 14:30 mit dem Titel Hallo an"
+text="Lege einen Termin für Dienstag um 14 Uhr bis 14:30 mit dem Titel Hallo an"
+text=text+"."
 #Doc ist text als Spacy Doc Objekt
 doc =  nlp(text)
 bereinigt=" ".join([token.text for token in doc if not token.is_stop and not token.is_punct])
@@ -26,10 +27,7 @@ def getTokenList():
     print(tokenListe)
     
 def checkActionKind():
-    #Dursucht Satz nach Entität für Art der Anlage
     for token in noStopwordDoc:
-        
-        
         if(token.pos_=="NOUN"):
             if(token.text=="Kalender"):
                 return "Kalender"
@@ -38,10 +36,10 @@ def checkActionKind():
             if(token.text=="Geburtstag"):
                 return"Geburtstag"
 
-def getIntend(kindOfRequest):
+def getIntend(userInput,kindOfRequest):
     matcher=Matcher(nlp.vocab)
     #List of Intends für mögliche aktionen für den matcher.
-    listOfIntends=["anlegen","löschen","ändern","eintragen","erstellen","Lege","Ändere","Lösche","Erstelle"]
+    listOfIntends=["anlegen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","Lege","Ändere","Lösche","Erstelle","Verschiebe","Verlege"]
     #Pattern anlegen
     patterns=[
         [{"TEXT":"Erstelle"},{"POS":"DET"},{"TEXT":kindOfRequest}],
@@ -55,7 +53,7 @@ def getIntend(kindOfRequest):
     ]
     
     matcher.add("Intention",patterns)
-    testDoc= nlp("lege einen Termin an mit dem Titel:Daan geht um 7 Uhr seinen dust an.")
+    testDoc= nlp(userInput)
     matches= matcher(testDoc)
 
     for match_id,start, end in matches:
@@ -240,7 +238,7 @@ def getUhrzeit():
             print("ja existiert", token.text)
     print(uhrzeiten)
     return uhrzeiten
-#print(getDatum(getDateText(doc)))
+
 getUhrzeit()
 class Logik(object):
     def __init__(self,titel):
@@ -250,9 +248,11 @@ class Logik(object):
 p = Logik()
 p.titel = getTitel("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab")
 print("Objekt", p.titel)
-p.datum = getIntend("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab ") 
+p.datum = getIntend("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab ",checkActionKind()) 
 print(p.datum)
 print(getUhrzeit()[0])
+print(getDatum(getDateText(doc)))
+
 #getUhrzeit()
  #UserEvent checkt welche Infos vom User schon gegeben wurden           
 # userEvent={

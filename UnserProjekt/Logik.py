@@ -236,12 +236,12 @@ def getUhrzeit():
     print(uhrzeiten)
     return uhrzeiten
 #print(getDatum(getDateText(doc)))
-class Nlp(object):
+class Logik(object):
     def __init__(self,titel):
         self.titel = titel
     def __init__(self) -> None:
         super().__init__()
-p = Nlp()
+p = Logik()
 p.titel = getTitel("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab")
 print(p.titel)
 

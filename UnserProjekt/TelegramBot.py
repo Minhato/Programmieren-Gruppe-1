@@ -1,12 +1,13 @@
 
-from NLP_Calendar.Nlp import Nlp, getTitel
+#from NLP_Calendar.Logik import Logik
+from Logik import *
 #from .Nlp import *
-import telebot
-import spacy
+#import telebot
+#import spacy
 
 #TheBotler
 tokenAPI = '1816801935:AAHAH98soREBBJvN2MQOAT4FaaCByDevG9w'
-p1 = Nlp()
+p1 = Logik()
 
 bot = telebot.TeleBot(tokenAPI)
 @bot.message_handler(commands=['start'])

@@ -44,5 +44,4 @@ def getEventId(jahr, monat, tag, stunde, minute):
 #getId('jaEndlich')
 print("event ID",getEventId(2021,5,13,13,30))
 #googleConnection()
-#Kommentar:Minh ist der beste!
 #sdölkfgölsfd

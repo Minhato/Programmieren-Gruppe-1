@@ -47,6 +47,8 @@ def getIntend(userInput,kindOfRequest):
         [{"TEXT":"Ändere"},{"POS":"DET"},{"TEXT":kindOfRequest}],
         [{"TEXT":"Lösche"},{"POS":"DET"},{"TEXT":kindOfRequest}],
         [{"TEXT":"Lege"},{"POS":"DET"},{"TEXT":kindOfRequest}],
+        [{"TEXT":"Verschiebe"},{"POS":"DET"},{"TEXT":kindOfRequest}],
+        [{"TEXT":"Verlege"},{"POS":"DET"},{"TEXT":kindOfRequest}],
         [{"POS":"VERB"},{"IS_PUNCT":True}],
         [{"TEXT":kindOfRequest},{"POS":"VERB"}]
     
@@ -71,6 +73,9 @@ def getIntend(userInput,kindOfRequest):
             elif "lösche"in intend.lower():
                 print("Termin löschen als Intend")
                 return "loeschen"
+            elif "verschiebe"in intend.lower() or "verlege" in intend.lower():
+                print("Termin verschieben als Intend")
+                return "verschiebe"
 
 
 
@@ -252,6 +257,7 @@ p.datum = getIntend("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geh
 print(p.datum)
 print(getUhrzeit()[0])
 print(getDatum(getDateText(doc)))
+print(getIntend("Ich möchte den Termin verschieben",checkActionKind()))
 
 #getUhrzeit()
  #UserEvent checkt welche Infos vom User schon gegeben wurden           

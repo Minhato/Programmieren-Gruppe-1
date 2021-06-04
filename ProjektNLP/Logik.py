@@ -161,7 +161,8 @@ def getDatum(erkannterTag):
     else:
         return datumNextWeek
 
-def getDateText(doc):
+def getDateText(userText):
+    doc=nlp(userText)
     Wochentage=["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"]
     MonateValue={
         "Jannuar":"01",
@@ -186,17 +187,17 @@ def getDateText(doc):
             monat=MonateValue[token.head.text]
             jahr=datetime.now().year
             userDatum=tag+monat+"."+str(jahr)
-            return userDatum
+            return str(userDatum)
         elif token.shape_=="dd.dd.dddd":
             userDatum=token.text
-            return token.text
+            return str(token.text)
         elif token.lemma_=="nächst" or token.text=="Woche":
             userDatum=" ".join([userDatum,token.text])
         elif token.text in Wochentage:
             userDatum=" ".join([userDatum,token.text])
             if(len(userDatum)<10):
                 userDatum=userDatum[1:]
-            return userDatum
+            return str(userDatum)
 
 
  
@@ -254,10 +255,7 @@ p = Logik()
 p.titel = getTitel("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab")
 print("Objekt", p.titel)
 p.datum = getIntend("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab ",checkActionKind()) 
-print(p.datum)
-print(getUhrzeit()[0])
-print(getDatum(getDateText(doc)))
-print(getIntend("Ich möchte den Termin verschieben",checkActionKind()))
+
 
 #getUhrzeit()
  #UserEvent checkt welche Infos vom User schon gegeben wurden           

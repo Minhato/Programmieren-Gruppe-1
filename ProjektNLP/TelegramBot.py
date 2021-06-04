@@ -24,7 +24,9 @@ def echo_message(message):
     print("eingabetyp:",type(eingabe))
     #p1.titel = getTitel(str(eingabe))
     pp.titel = getTitel(eingabe)
+    pp.intend =getIntend(eingabe,checkActionKind())
     print("p1 titel",pp.titel)
+    pp.intend=str(pp.intend)
     print(type(pp.titel))
     pp.titel = str(pp.titel)
     print(type(pp.titel))
@@ -34,8 +36,10 @@ def echo_message(message):
     result = "Titel lautet: " + str(pp.titel)
     print("result ",type(result), result)
     bot.send_message(chat_id, result)
-    uhrzeit = "Anfangsuhrzeit ist: " + str(pp.uhrzeit) + " Uhr"
-    bot.send_message(chat_id, uhrzeit)
+    chatUhrzeit = "Anfangsuhrzeit ist: " + str(pp.uhrzeit) + " Uhr"
+    bot.send_message(chat_id, chatUhrzeit)
     print("Test")
+    chatIntend="Erkannter intend ist: "+str(pp.intend)
+    bot.send_message(chat_id,chatIntend)
 
 bot.polling()

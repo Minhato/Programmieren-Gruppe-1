@@ -1,3 +1,4 @@
+from KalenderMethoden import terminAnlegen
 import spacy
 from spacy.matcher import Matcher
 from spacy.matcher import PhraseMatcher
@@ -10,6 +11,7 @@ nlp=spacy.load("de_core_news_sm")
 matcher=Matcher(nlp.vocab)
 
 text="Lege einen Termin für Dienstag um 14 Uhr bis 14:30 mit dem Titel Hallo an"
+#text = ""
 text=text+"."
 #Doc ist text als Spacy Doc Objekt
 doc =  nlp(text)
@@ -19,6 +21,17 @@ bereinigt=" ".join([token.text for token in doc if not token.is_stop and not tok
 noStopwordDoc=nlp(bereinigt)
 
 tokenListe=[]
+
+def setText(eingabe):
+    global text, doc, bereinigt 
+    text = eingabe
+    text=text+"."
+    #Doc ist text als Spacy Doc Objekt
+    doc =  nlp(text)
+    bereinigt=" ".join([token.text for token in doc if not token.is_stop and not token.is_punct])
+
+
+
 def getTokenList():
     #Liste mit Tokens zum checken
     for token in noStopwordDoc:
@@ -235,22 +248,47 @@ def getTitel(text):
 getTitel("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab")
 
 
-def getUhrzeit():
+def getUhrzeit(index):
     uhrzeiten= []
     for token in doc:
         print(token.shape_)
-        if token.shape_ == "dd:dd" or token.shape_ == "dd":
+
+        if token.shape_ == "dd":
+            tokendd = str(token.text) + ":00"
+            uhrzeiten.append(tokendd)
+
+        elif token.shape_ == "dd:dd":
             uhrzeiten.append(token.text)
+            
             print("ja existiert", token.text)
     print(uhrzeiten)
-    return uhrzeiten
+    print("COUNT "+ str(len(uhrzeiten)))
+    if len(uhrzeiten) == 1:
+        enduhrzeit = uhrzeiten[0]
+        enduhrzeit = datetime.strptime(enduhrzeit, '%H:%M').replace(second=0) + timedelta( minutes= 30)
+        print(str(enduhrzeit) + " die enduhrzeit bisher")
+        enduhrzeit = enduhrzeit.time()
+        uhrzeiten.append(str(enduhrzeit))
+        print("Die enduhrzeit " +str(enduhrzeit))
+        print(uhrzeiten)
+    return uhrzeiten[index]
 
-getUhrzeit()
+setText("Erstelle einen Termin um 14 Uhr mit dem Titel JOO")
+print("gesezter Text " + text )
+print("das ist die Uhrzeit " + getUhrzeit(0))
+
+def kalenderEintrag(self):
+    if self.intend is "erstellen":
+        terminAnlegen(self.datum)
+
+
 class Logik(object):
     def __init__(self,titel):
         self.titel = titel
     def __init__(self) -> None:
         super().__init__()
+
+
 p = Logik()
 p.titel = getTitel("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab")
 print("Objekt", p.titel)

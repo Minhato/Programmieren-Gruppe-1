@@ -25,22 +25,27 @@ def echo_message(message):
     #chatID und eingabe erfassen
     chat_id = message.chat.id
     eingabe = message.text
+    setText(eingabe)
     print("eingabetyp:",type(eingabe))
 
     #Methoden aufruf und speichern in Objekt
-    pp.titel = getTitel(eingabe)
+    pp.titel = getTitel(eingabe) 
     pp.intend =getIntend(eingabe,checkActionKind())
-    pp.uhrzeit = getUhrzeit()[0]
+    pp.uhrzeit = getUhrzeit(0)
+    pp.enduhrzeit = getUhrzeit(1)
     pp.datum=getDatum(getDateText(eingabe))
+   
 
     #Bot Antwort vorbereiten
     chatTitel = "Titel lautet: " + str(pp.titel)
     chatUhrzeit = "Anfangsuhrzeit ist: " + str(pp.uhrzeit) + " Uhr"
+    chatEndUhrzeit = "Enduhrzeit ist: " + str(pp.enduhrzeit) + " Uhr"    
     chatIntend="Erkannter intend ist: "+str(pp.intend)
     chatDatum="geplates Datum ist der: "+str(pp.datum)
     #Bot Antwort senden
     bot.send_message(chat_id, chatTitel)
     bot.send_message(chat_id, chatUhrzeit)
+    bot.send_message(chat_id, chatEndUhrzeit)
     bot.send_message(chat_id, chatIntend)
     bot.send_message(chat_id, chatDatum)
 

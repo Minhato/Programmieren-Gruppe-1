@@ -29,14 +29,33 @@ def echo_message(message):
     print("eingabetyp:",type(eingabe))
 
     #Methoden aufruf und speichern in Objekt
-    pp.titel = getTitel(eingabe) 
-    pp.intend =getIntend(eingabe,checkActionKind())
-    pp.uhrzeit = getUhrzeit(0)
-    pp.enduhrzeit = getUhrzeit(1)
-    pp.datum=getDatum(getDateText(eingabe))
+    try:
+        pp.titel = getTitel(eingabe)
+    except:
+        pp.titel=None
+    try:
+        pp.intend =getIntend(eingabe,checkActionKind())
+    except:
+        pp.intend=None
+    try:
+        pp.uhrzeit = getUhrzeit(0)
+    except:
+        pp.uhrzeit=None
+    try:
+        pp.enduhrzeit = getUhrzeit(1)
+    except:
+        pp.enduhrzeit=None
+    try:
+        #pp.datum=getDateText(eingabe)
+        pp.datum=getDatum(getDateText(eingabe))
+    except: 
+        pp.datum=None
+
+    print(pp.__dict__)    
    
 
     #Bot Antwort vorbereiten
+    
     chatTitel = "Titel lautet: " + str(pp.titel)
     chatUhrzeit = "Anfangsuhrzeit ist: " + str(pp.uhrzeit) + " Uhr"
     chatEndUhrzeit = "Enduhrzeit ist: " + str(pp.enduhrzeit) + " Uhr"    
@@ -48,5 +67,12 @@ def echo_message(message):
     bot.send_message(chat_id, chatEndUhrzeit)
     bot.send_message(chat_id, chatIntend)
     bot.send_message(chat_id, chatDatum)
+
+def botNachfrage(message, typ):
+    chat_id = message.chat.id
+    bot.send_message(chat_id, "Kein " + typ + " gefunden. Bitte geben Sie die Informationen ein:")
+    eingabe = message.text
+    return eingabe
+
 
 bot.polling()

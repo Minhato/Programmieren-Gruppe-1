@@ -6,6 +6,7 @@ from spacy import displacy
 from datetime import*
 from re import*
 
+
 #Korpus laden
 nlp=spacy.load("de_core_news_sm")
 matcher=Matcher(nlp.vocab)
@@ -37,7 +38,6 @@ def getTokenList():
     for token in noStopwordDoc:
         if(token.is_stop == False or token.pos_=="NOUN"):
             tokenListe.append(token.lemma_)
-    print(tokenListe)
     
 def checkActionKind():
     for token in noStopwordDoc:
@@ -52,18 +52,21 @@ def checkActionKind():
 def getIntend(userInput,kindOfRequest):
     matcher=Matcher(nlp.vocab)
     #List of Intends für mögliche aktionen für den matcher.
-    listOfIntends=["anlegen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","Lege","Ändere","Lösche","Erstelle","Verschiebe","Verlege"]
+    listOfIntends=["anlegen","anzeigen","machen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","Lege","Ändere","Lösche","Erstelle","Verschiebe","Verlege","Mache","Zeige"]
     #Pattern anlegen
     patterns=[
-        [{"TEXT":"Erstelle"},{"POS":"DET"},{"TEXT":kindOfRequest}],
-        [{"TEXT":"Trage"},{"POS":"DET"},{"TEXT":kindOfRequest}],
-        [{"TEXT":"Ändere"},{"POS":"DET"},{"TEXT":kindOfRequest}],
-        [{"TEXT":"Lösche"},{"POS":"DET"},{"TEXT":kindOfRequest}],
-        [{"TEXT":"Lege"},{"POS":"DET"},{"TEXT":kindOfRequest}],
-        [{"TEXT":"Verschiebe"},{"POS":"DET"},{"TEXT":kindOfRequest}],
-        [{"TEXT":"Verlege"},{"POS":"DET"},{"TEXT":kindOfRequest}],
-        [{"POS":"VERB"},{"IS_PUNCT":True}],
-        [{"TEXT":kindOfRequest},{"POS":"VERB"}]
+        [{"LOWER":"erstelle"},{"POS":"DET"},{"TEXT":kindOfRequest}],
+        [{"LOWER":"mache"},{"POS":"DET"},{"TEXT":kindOfRequest}],
+        [{"LOWER":"trage"},{"POS":"DET"},{"TEXT":kindOfRequest}],
+        [{"LOWER":"ändere"},{"POS":"DET"},{"TEXT":kindOfRequest}],
+        [{"LOWER":"lösche"},{"POS":"DET"},{"TEXT":kindOfRequest}],
+        [{"LOWER":"lege"},{"POS":"DET"},{"TEXT":kindOfRequest}],
+        [{"LOWER":"verschiebe"},{"POS":"DET"},{"TEXT":kindOfRequest}],
+        [{"LOWER":"verlege"},{"POS":"DET"},{"TEXT":kindOfRequest}],
+        [{"LOWER":"zeige"},{"POS":"PRON","OP":"?"},{"POS":"DET"},{"LEMMA":kindOfRequest}],
+        [{"LEMMA":kindOfRequest},{"POS":"VERB"}],
+        [{"POS":"VERB"},{"IS_PUNCT":True}]
+        
     
     ]
     
@@ -72,23 +75,24 @@ def getIntend(userInput,kindOfRequest):
     matches= matcher(testDoc)
 
     for match_id,start, end in matches:
-   
+
         string_id=nlp.vocab.strings[match_id]
         span=testDoc[start:end]
         intend=span.text.replace(kindOfRequest,"").replace(" ","").replace(".","")
-        if(intend in listOfIntends or len(intend)>7):
-            if "lege"in intend.lower() or "erstelle"in intend.lower() or"trage"in intend.lower():
-                print("Termin erstellen als Intend")
+    if(intend in listOfIntends or len(intend)>7):
+            if "lege"in intend.lower() or "erstelle"in intend.lower() or"trage"in intend.lower() or "mache" in intend.lower():
                 return "erstellen"
             elif "änder" in intend.lower():
-                print("Termin ändern als Intend")
                 return "aendern"
             elif "lösche"in intend.lower():
-                print("Termin löschen als Intend")
                 return "loeschen"
             elif "verschiebe"in intend.lower() or "verlege" in intend.lower():
-                print("Termin verschieben als Intend")
                 return "verschiebe"
+            elif "zeige" in intend.lower():
+                return "zeige an"
+            else:
+                return"kein pattern für Intend gefunden"
+    
 
 
 
@@ -155,7 +159,6 @@ def getDatum(erkannterTag):
     for match_id,start,end in matches:
         string_id=nlp.vocab.strings[match_id]            
         span=testDoc[start:end]
-        print(span.text,match_id,start)
         datumNextWeek=getDateNextWeek(span.text)
     
     
@@ -195,22 +198,23 @@ def getDateText(userText):
     for token in doc:
         if token.shape_=="dd."or token.shape_=="d." and token.head.text in MonateValue:
             tag=token.text
-            if token.shape_=="d.":
-                tag="0"+tag
-            monat=MonateValue[token.head.text]
+        if token.shape_=="d.":
+            tag="0"+tag
+            monat=MonateValue[token.head.text]                
             jahr=datetime.now().year
             userDatum=tag+monat+"."+str(jahr)
             return str(userDatum)
         elif token.shape_=="dd.dd.dddd":
-            userDatum=token.text
-            return str(token.text)
+                userDatum=token.text
+                return str(token.text)
         elif token.lemma_=="nächst" or token.text=="Woche":
-            userDatum=" ".join([userDatum,token.text])
+                userDatum=" ".join([userDatum,token.text])
         elif token.text in Wochentage:
-            userDatum=" ".join([userDatum,token.text])
-            if(len(userDatum)<10):
-                userDatum=userDatum[1:]
-            return str(userDatum)
+                userDatum=" ".join([userDatum,token.text])
+                if(len(userDatum)<10):
+                    userDatum=userDatum[1:]
+                return str(userDatum)
+    
 
 
  
@@ -218,28 +222,22 @@ def getDateText(userText):
 def getLocation():
     #UNFINISHED Soll Location des Termins Liefern falls Vorhanden
     for ent in doc.ents:
-        print(ent.text,ent.label_)
         if(ent.label_ == "LOC"):
             return ent.text
-            print("Der Termin soll hier stattfinden"+ent.text)
             
 
 def getTitel(text):
     matcher=PhraseMatcher(nlp.vocab)
     term = ["titel"]
     patterns = [nlp.make_doc(text) for text in term]
-    print(patterns)
     matcher.add("titel", patterns)
     titel = None
     doc = nlp(text)
     lower_doc =  str(doc).lower()
     matches = matcher(nlp(lower_doc))
-    print(matches, "type", type(matches))
 
     for match_id, start, end in matches:
-        print(match_id,start,end)
         titel = doc[end:len(doc)]
-        print(titel.text)
         return titel
 
     if not matches: 
@@ -250,37 +248,39 @@ getTitel("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab")
 
 def getUhrzeit(index):
     uhrzeiten= []
-    for token in doc:
-        print(token.shape_)
+    try:
+        for token in doc:
+            if token.shape_ == "dd":
+                tokendd = str(token.text) + ":00"
+                uhrzeiten.append(tokendd)
 
-        if token.shape_ == "dd":
-            tokendd = str(token.text) + ":00"
-            uhrzeiten.append(tokendd)
-
-        elif token.shape_ == "dd:dd":
-            uhrzeiten.append(token.text)
-            
-            print("ja existiert", token.text)
-    print(uhrzeiten)
-    print("COUNT "+ str(len(uhrzeiten)))
-    if len(uhrzeiten) == 1:
-        enduhrzeit = uhrzeiten[0]
-        enduhrzeit = datetime.strptime(enduhrzeit, '%H:%M').replace(second=0) + timedelta( minutes= 30)
-        print(str(enduhrzeit) + " die enduhrzeit bisher")
-        enduhrzeit = enduhrzeit.time()
-        uhrzeiten.append(str(enduhrzeit))
-        print("Die enduhrzeit " +str(enduhrzeit))
-        print(uhrzeiten)
-    return uhrzeiten[index]
+            elif token.shape_ == "dd:dd":
+                uhrzeiten.append(token.text)
+        if len(uhrzeiten) == 1:
+            enduhrzeit = uhrzeiten[0]
+            enduhrzeit = datetime.strptime(enduhrzeit, '%H:%M').replace(second=0) + timedelta( minutes= 30)
+            enduhrzeit = enduhrzeit.time()
+            uhrzeiten.append(str(enduhrzeit))
+        return uhrzeiten[index]
+    except IndexError:
+        print("Keine Uhrzeiten gefunden")
+        return None 
 
 setText("Erstelle einen Termin um 14 Uhr mit dem Titel JOO")
 print("gesezter Text " + text )
 print("das ist die Uhrzeit " + getUhrzeit(0))
 
 def kalenderEintrag(self):
-    if self.intend is "erstellen":
-        terminAnlegen(self.datum)
+    jahr = datetime.strptime(self.datum,"%Y")
+    monat = datetime.strptime(self.datum,"%m")
+    tag = datetime.strptime(self.datum,"%d")
+    stunde = datetime.strptime(self.uhrzeit,"%H")
+    minute = datetime.strptime(self.uhrzeit,"%M")
+    endStunde = datetime.strptime(self.enduhrzeit,"%H")
+    endMinute = datetime.strptime(self.enduhrzeit,"%M")
 
+    if self.intend == "erstellen":
+        terminAnlegen(jahr,monat,tag,stunde,minute,endStunde,endMinute,self.titel, "")
 
 class Logik(object):
     def __init__(self,titel):

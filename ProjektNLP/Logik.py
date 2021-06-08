@@ -1,4 +1,4 @@
-from KalenderMethoden import terminAnlegen
+from KalenderMethoden import kalenderAnlegen, kalenderLoeschen, kalenderAnlegen, terminAnlegen, terminBearbeiten, terminanzeigen, terminloeschen
 import spacy
 from spacy.matcher import Matcher
 from spacy.matcher import PhraseMatcher
@@ -278,9 +278,22 @@ def kalenderEintrag(self):
     minute = datetime.strptime(self.uhrzeit,"%M")
     endStunde = datetime.strptime(self.enduhrzeit,"%H")
     endMinute = datetime.strptime(self.enduhrzeit,"%M")
+    titel = "TEST"
 
-    if self.intend == "erstellen":
+    if self.intend == "erstellen" and self.art == "Termin":
         terminAnlegen(jahr,monat,tag,stunde,minute,endStunde,endMinute,self.titel, "")
+    elif self.intend == "bearbeiten" and self.art == "Termin":
+        terminBearbeiten(jahr,monat,tag,stunde,minute,titel)
+    elif self.intend == "loeschen" and self.art == "Termin":
+        terminloeschen(jahr,monat,tag,stunde,minute)
+    elif self.intend == "anzeigen" and self.art == "Termin":
+        terminanzeigen(jahr,monat,tag)
+    elif self.intend == "erstellen" and self.art == "Kalender":
+        kalenderAnlegen(titel)
+    elif self.intend == "loeschen" and self.art == "Kalender":
+        kalenderLoeschen(titel)
+
+
 
 class Logik(object):
     def __init__(self,titel):

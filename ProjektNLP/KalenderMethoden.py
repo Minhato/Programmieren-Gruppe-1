@@ -5,7 +5,7 @@ from oauth2client import client
 from googleapiclient import sample_tools
 import GoogleAPIConnection as gac
 
-def setKalender(kalenderName):
+def kalenderAnlegen(kalenderName):
   """Zum erstellen eines neuen Kalender (Minh)"""
   gac.googleConnection()
   calendar = {
@@ -15,7 +15,7 @@ def setKalender(kalenderName):
   created_calendar = gac.service.calendars().insert(body=calendar).execute()
   print (created_calendar['id'])
 
-def deleteKalender(kalender):
+def kalenderLoeschen(kalender):
   """Zum löschen eines erstellten Kalender (Minh)  """
   id = gac.getId(kalender)
   gac.service.calendars().delete(calendarId= id).execute()

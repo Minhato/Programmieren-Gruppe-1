@@ -105,6 +105,7 @@ def terminloeschen(jahr,monat,tag,startStunde,startMinute):
      print("ID gefunden")
      gac.service.events().delete(calendarId= gac.getId('TestKalender'), eventId= eventID).execute()
 
-#terminAnlegen(2021,6,2,13,00,14,0,"nlp","")
+#setKalender('TestKalender')
+#terminAnlegen(2021,6,8,18,00,20,0,"Daans Termin","Daan hat einen Termin in seinem Kalender")
 #terminloeschen(2021,6,2,13,0)
 #terminBearbeiten(2021,6,2,13,0, "anderer Titel")

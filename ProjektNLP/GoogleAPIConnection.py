@@ -42,6 +42,6 @@ def getEventId(jahr, monat, tag, stunde, minute):
             eventID= event['id']
     return eventID
 #getId('jaEndlich')
-print("event ID",getEventId(2021,5,13,13,30))
-#googleConnection()
+#print("event ID",getEventId(2021,5,13,13,30))
+googleConnection()
 #sdölkfgölsfd

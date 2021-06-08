@@ -13,7 +13,6 @@ matcher=Matcher(nlp.vocab)
 
 text="Lege einen Termin für Dienstag um 14 Uhr bis 14:30 mit dem Titel Hallo an"
 #text = ""
-text=text+"."
 #Doc ist text als Spacy Doc Objekt
 doc =  nlp(text)
 bereinigt=" ".join([token.text for token in doc if not token.is_stop and not token.is_punct])
@@ -51,6 +50,7 @@ def checkActionKind():
 
 def getIntend(userInput,kindOfRequest):
     matcher=Matcher(nlp.vocab)
+    userInput=userInput+"."
     #List of Intends für mögliche aktionen für den matcher.
     listOfIntends=["anlegen","anzeigen","machen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","Lege","Ändere","Lösche","Erstelle","Verschiebe","Verlege","Mache","Zeige"]
     #Pattern anlegen

@@ -357,8 +357,8 @@ class Logik(object):
         #     terminBearbeiten(jahr,monat,tag,stunde,minute,titel)    
         # elif self.intend == "loeschen": # and self.art == "Termin":
         #      terminloeschen(jahr,monat,tag,stunde,minute)
-        # elif self.intend == "anzeigen": # and self.art == "Termin":
-        #      terminanzeigen(jahr,monat,tag)
+        elif self.intend == "anzeigen": # and self.art == "Termin":
+              terminanzeigen(jahr,monat,tag)
         # elif self.intend == "erstellen" and self.art == "Kalender":
         #     kalenderAnlegen(titel)
         # elif self.intend == "loeschen" and self.art == "Kalender":

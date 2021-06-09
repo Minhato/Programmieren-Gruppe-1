@@ -48,13 +48,20 @@ def echo_message(message):
     try:
         #pp.datum=getDateText(eingabe)
         pp.datum=getDatum(getDateText(eingabe))
+        print(type(pp.datum))
+        print(pp.datum)
+        #pp.datum = datetime.strptime(pp.datum, "%d" "." "%m" "." "%Y").date()
+        print(type(pp.datum))
     except: 
         pp.datum=None
     
+    print("das dict:") 
+    print(pp.__dict__)
 
-      
-   
-
+    #pp.datum = datetime(2021,6,10)
+    pp.ausgeben()
+    pp.testest()
+    
     #Bot Antwort vorbereiten
     intendCheck(chat_id,pp.__dict__)
     try:print(checkDicForMissingValue(pp.__dict__,pp.intend))

@@ -217,7 +217,7 @@ def getDateText(userText):
     
 
 
- 
+
 
 def getLocation():
     #UNFINISHED Soll Location des Termins Liefern falls Vorhanden
@@ -271,19 +271,26 @@ print("gesezter Text " + text )
 print("das ist die Uhrzeit " + getUhrzeit(0))
 
 def kalenderEintrag(self):
-    jahr = datetime.strptime(self.datum,"%Y")
-    monat = datetime.strptime(self.datum,"%m")
-    tag = datetime.strptime(self.datum,"%d")
-    stunde = datetime.strptime(self.uhrzeit,"%H")
-    minute = datetime.strptime(self.uhrzeit,"%M")
-    endStunde = datetime.strptime(self.enduhrzeit,"%H")
-    endMinute = datetime.strptime(self.enduhrzeit,"%M")
+    datumAlsDate = datetime.strptime( (self.datum,"%d" "." "%m" "." "%Y"))
+    datetime.strftime
+    jahr = datetime.strftime(datumAlsDate,"%Y")
+    monat = datetime.strftime(datumAlsDate,"%m")
+    tag = datetime.strftime(datumAlsDate,"%d")
+    stunde = datetime.strftime(datumAlsDate,"%H")
+    minute = datetime.strftime(datumAlsDate,"%M")
+    endStunde = datetime.strftime(datumAlsDate,"%H")
+    endMinute = datetime.strftime(datumAlsDate,"%M")
     titel = "TEST"
 
     if self.intend == "erstellen" and self.art == "Termin":
+        print("Termin wird angelegt")
         terminAnlegen(jahr,monat,tag,stunde,minute,endStunde,endMinute,self.titel, "")
     elif self.intend == "bearbeiten" and self.art == "Termin":
+        #alel bearbeitungsfälle
         terminBearbeiten(jahr,monat,tag,stunde,minute,titel)
+    elif self.intend == "verschieben" and self.art == "Termin":
+        #alel bearbeitungsfälle
+        terminBearbeiten(jahr,monat,tag,stunde,minute,titel)    
     elif self.intend == "loeschen" and self.art == "Termin":
         terminloeschen(jahr,monat,tag,stunde,minute)
     elif self.intend == "anzeigen" and self.art == "Termin":
@@ -300,6 +307,55 @@ class Logik(object):
         self.titel = titel
     def __init__(self) -> None:
         super().__init__()
+    
+    def ausgeben(self):
+        print("ausgeben aus der Logik Klasse")
+        print(self.datum)
+        print("---")
+        print(type(self.datum))
+        print("---")
+    def testest(self):
+        datum= self.datum
+        startUhrzeit= datetime.strptime(self.uhrzeit, "%H" ":" "%M")
+        endUhrzeit= datetime.strptime(self.enduhrzeit, "%H" ":" "%M" ":" "%S")
+        #startUhrzeit= datetime.strptime(self.uhrzeit, ) 
+        print("Datum ist: " + datum)
+        datumAlsDate = datetime.strptime(datum, "%d" "." "%m" "." "%Y")
+        jahr = int (datetime.strftime(datumAlsDate,"%Y"))
+        monat = int (datetime.strftime(datumAlsDate,"%m"))
+        tag = int (datetime.strftime(datumAlsDate,"%d"))
+        stunde = int (datetime.strftime(startUhrzeit,"%H"))
+        minute = int (datetime.strftime(startUhrzeit,"%M"))
+        endStunde = int (datetime.strftime(endUhrzeit,"%H"))
+        endMinute = int (datetime.strftime(endUhrzeit,"%M"))
+
+        print(type(stunde))
+        titel = "TEST"
+
+        if self.intend == "erstellen": # and self.art == "Termin":
+            print("Termin wird angelegt")
+            print(jahr, monat, tag, stunde, minute, endStunde, endMinute)
+            print("Titel gleich: ")
+            print("self.titel")
+            print(type(self.titel))
+            terminAnlegen(jahr,monat,tag, stunde,minute,endStunde,endMinute,str(self.titel), " ")
+        # elif self.intend == "bearbeiten" and self.art == "Termin":
+        #     #alel bearbeitungsfälle
+        #     terminBearbeiten(jahr,monat,tag,stunde,minute,titel)
+        # elif self.intend == "verschieben" and self.art == "Termin":
+        #     #alel bearbeitungsfälle
+        #     terminBearbeiten(jahr,monat,tag,stunde,minute,titel)    
+        # elif self.intend == "loeschen" and self.art == "Termin":
+        #     terminloeschen(jahr,monat,tag,stunde,minute)
+        # elif self.intend == "anzeigen" and self.art == "Termin":
+        #     terminanzeigen(jahr,monat,tag)
+        # elif self.intend == "erstellen" and self.art == "Kalender":
+        #     kalenderAnlegen(titel)
+        # elif self.intend == "loeschen" and self.art == "Kalender":
+        #     kalenderLoeschen(titel)
+
+
+        
 
 
 p = Logik()
@@ -309,7 +365,7 @@ p.datum = getIntend("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geh
 
 
 #getUhrzeit()
- #UserEvent checkt welche Infos vom User schon gegeben wurden           
+#UserEvent checkt welche Infos vom User schon gegeben wurden           
 # userEvent={
 #     "eventKind" : checkActionKind(),
 #     "intend" : getIntend(checkActionKind()),

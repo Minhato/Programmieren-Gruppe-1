@@ -113,7 +113,10 @@ def calculateWithWeekdays(requestedWeekday):
         calculatedDate=calculatedDate+timedelta(days=1)
         
         weekdayToday=date.weekday(calculatedDate)
-    return calculatedDate
+
+    stringCalculatedDate=str(calculatedDate)
+    formatedDate=datetime.strptime(stringCalculatedDate,'%Y' '-' '%m' '-' '%d').strftime('%d' '.' '%m' '.' '%Y')          #Format verändern auf dd.dd.dddd
+    return str(formatedDate)
 
 def getDatum(erkannterTag):
     #heutigesDatum
@@ -196,7 +199,7 @@ def getDateText(userText):
     }
     userDatum =""
     for token in doc:
-        if token.shape_=="dd."or token.shape_=="d." and token.head.text in MonateValue:
+        if token.shape_=="dd."or token.shape_=="d."or token.shape_=="d" and token.head.text in MonateValue:
             tag=token.text
         if token.shape_=="d.":
             tag="0"+tag
@@ -319,7 +322,7 @@ class Logik(object):
         startUhrzeit= datetime.strptime(self.uhrzeit, "%H" ":" "%M")
         endUhrzeit= datetime.strptime(self.enduhrzeit, "%H" ":" "%M" ":" "%S")
         #startUhrzeit= datetime.strptime(self.uhrzeit, ) 
-        print("Datum ist: " + datum)
+        print("Datum ist: " + str(datum))
         datumAlsDate = datetime.strptime(datum, "%d" "." "%m" "." "%Y")
         jahr = int (datetime.strftime(datumAlsDate,"%Y"))
         monat = int (datetime.strftime(datumAlsDate,"%m"))

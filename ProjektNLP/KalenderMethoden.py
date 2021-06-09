@@ -3,6 +3,7 @@ from pprint import pprint
 import sys
 from oauth2client import client
 from googleapiclient import sample_tools
+from pyasn1.type.constraint import ValueRangeConstraint
 import GoogleAPIConnection as gac
 
 def kalenderAnlegen(kalenderName):
@@ -57,9 +58,21 @@ def terminanzeigen(jahr, monat, tag,):
   """Zum anzeigen aller Termine an dem jeweiligen Tag (Minh) """
   events = gac.service.events().list(calendarId= gac.getId('TestKalender')).execute()
   datum = str(datetime.date(jahr,monat,tag))
+  listeDerEvents = []
   for event in events['items']:
      if datum in event.get('start')['dateTime']: 
-      print( event.get('summary')+ " um " + event.get('start')['dateTime'])
+      print( event.get('summary')+ " am " + event.get('start')['dateTime'])
+      variable = event.get('start')['dateTime']
+      #listeDerEvents = event.get('summary')+ " um " + event.get('start')['dateTime'] #das alte
+      listeDerEvents =  event.get('summary')+ " um " + str(datetime.datetime.strptime(variable,("%Y-%m-%d" "T" "%H:%M:%S" "%z")).strftime("%d.%m.%Y" " um " "%H:%M" "Uhr"))
+      #variable = event.get('start')['dateTime']
+      variable = datetime.datetime.strptime(variable,("%Y-%m-%d" "T" "%H:%M:%S" "%z")).strftime("%d.%m.%Y" "um" "%H:%M" "Uhr") #2021-06-15T03:00:00+02:00
+      #variable = datetime.datetime.strptime(variable, "%Y-%m-%d" "T" "%H:%M:%S" "%z")
+      print("variable: ")
+      print(type(variable))
+      print(variable)
+  return listeDerEvents
+  #TO:DO Methode für antwort in Telegram
 
 def terminBearbeiten(jahr,monat,tag,stunde,minute,titel):
   """Zum Termin Bearbeiten  """

@@ -52,7 +52,7 @@ def getIntend(userInput,kindOfRequest):
     matcher=Matcher(nlp.vocab)
     userInput=userInput+"."
     #List of Intends für mögliche aktionen für den matcher.
-    listOfIntends=["anlegen","anzeigen","machen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","Lege","Ändere","Lösche","Erstelle","Verschiebe","Verlege","Mache","Zeige"]
+    listOfIntends=["anlegen","anzeigen","machen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","Lege","Ändere","Lösche","Erstelle","Verschiebe","Verlege","Mache","zeige"]
     #Pattern anlegen
     patterns=[
         [{"LOWER":"erstelle"},{"POS":"DET"},{"TEXT":kindOfRequest}],
@@ -306,8 +306,8 @@ def kalenderEintrag(self):
 
 
 class Logik(object):
-    def __init__(self,titel):
-        self.titel = titel
+    def __init__(self,):
+     pass
     def __init__(self) -> None:
         super().__init__()
     
@@ -319,6 +319,14 @@ class Logik(object):
         print("---")
     def testest(self):
         datum= self.datum
+        if self.intend == "zeige an":
+            datumAlsDate = datetime.strptime(datum, "%d" "." "%m" "." "%Y")
+            jahr = int (datetime.strftime(datumAlsDate,"%Y"))
+            monat = int (datetime.strftime(datumAlsDate,"%m"))
+            tag = int (datetime.strftime(datumAlsDate,"%d"))
+        
+        elif self.intend == "erstellen": # usw TO:DO
+            pass 
         try:
             startUhrzeit= datetime.strptime(self.uhrzeit, "%H" ":" "%M")
             endUhrzeit= datetime.strptime(self.enduhrzeit, "%H" ":" "%M")
@@ -357,8 +365,9 @@ class Logik(object):
         #     terminBearbeiten(jahr,monat,tag,stunde,minute,titel)    
         # elif self.intend == "loeschen": # and self.art == "Termin":
         #      terminloeschen(jahr,monat,tag,stunde,minute)
-        elif self.intend == "anzeigen": # and self.art == "Termin":
-              terminanzeigen(jahr,monat,tag)
+        elif self.intend == "zeige an": # and self.art == "Termin":
+            print("termine werden angezeigt")
+            return terminanzeigen(jahr,monat,tag)
         # elif self.intend == "erstellen" and self.art == "Kalender":
         #     kalenderAnlegen(titel)
         # elif self.intend == "loeschen" and self.art == "Kalender":

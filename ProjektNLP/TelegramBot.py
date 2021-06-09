@@ -133,13 +133,19 @@ def echo_message(message):
         checkAllInputs(eingabe)
         if(checkDicForMissingValue(pp.__dict__,pp.intend)==[]):
             formatAndSendMessages(chat_id)
+            pp.testest()
             print(ersteUserNachricht)
+            bot.send_message(chat_id, pp.testest())
         else:
             intendCheck(chat_id,pp.__dict__)
             missingValueArray=checkDicForMissingValue(pp.__dict__,pp.intend)
             safeGivenElements(pp.__dict__,pp.intend)
             ersteUserNachricht =False
             missingValueNachfrage(chat_id,missingValueArray)
+            #pp.testest()
+            print("TEST TEST return: ")
+            print(pp.testest)
+            bot.send_message(chat_id, str(pp.testest()))
             print(ersteUserNachricht)
             
     else:

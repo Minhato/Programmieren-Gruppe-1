@@ -262,7 +262,7 @@ def getUhrzeit(index):
         if len(uhrzeiten) == 1:
             enduhrzeit = uhrzeiten[0]
             enduhrzeit = datetime.strptime(enduhrzeit, '%H:%M').replace(second=0) + timedelta( minutes= 30)
-            enduhrzeit = enduhrzeit.time()
+            enduhrzeit = enduhrzeit.time().strftime('%H:%M')
             uhrzeiten.append(str(enduhrzeit))
         return uhrzeiten[index]
     except IndexError:
@@ -319,20 +319,24 @@ class Logik(object):
         print("---")
     def testest(self):
         datum= self.datum
-        startUhrzeit= datetime.strptime(self.uhrzeit, "%H" ":" "%M")
-        endUhrzeit= datetime.strptime(self.enduhrzeit, "%H" ":" "%M" ":" "%S")
-        #startUhrzeit= datetime.strptime(self.uhrzeit, ) 
-        print("Datum ist: " + str(datum))
-        datumAlsDate = datetime.strptime(datum, "%d" "." "%m" "." "%Y")
-        jahr = int (datetime.strftime(datumAlsDate,"%Y"))
-        monat = int (datetime.strftime(datumAlsDate,"%m"))
-        tag = int (datetime.strftime(datumAlsDate,"%d"))
-        stunde = int (datetime.strftime(startUhrzeit,"%H"))
-        minute = int (datetime.strftime(startUhrzeit,"%M"))
-        endStunde = int (datetime.strftime(endUhrzeit,"%H"))
-        endMinute = int (datetime.strftime(endUhrzeit,"%M"))
+        try:
+            startUhrzeit= datetime.strptime(self.uhrzeit, "%H" ":" "%M")
+            endUhrzeit= datetime.strptime(self.enduhrzeit, "%H" ":" "%M")
+            #startUhrzeit= datetime.strptime(self.uhrzeit, ) 
+            print("Datum ist: " + str(datum))
+            datumAlsDate = datetime.strptime(datum, "%d" "." "%m" "." "%Y")
+            jahr = int (datetime.strftime(datumAlsDate,"%Y"))
+            monat = int (datetime.strftime(datumAlsDate,"%m"))
+            tag = int (datetime.strftime(datumAlsDate,"%d"))
+            stunde = int (datetime.strftime(startUhrzeit,"%H"))
+            minute = int (datetime.strftime(startUhrzeit,"%M"))
+            #neueStunde, neueMinute = 5 #TO:DO
+            endStunde = int (datetime.strftime(endUhrzeit,"%H"))
+            endMinute = int (datetime.strftime(endUhrzeit,"%M"))
+        except:
 
-        print(type(stunde))
+            print("Daten in testetst Fehlerhaft")
+
         titel = "TEST"
 
         if self.intend == "erstellen": # and self.art == "Termin":
@@ -342,20 +346,23 @@ class Logik(object):
             print("self.titel")
             print(type(self.titel))
             terminAnlegen(jahr,monat,tag, stunde,minute,endStunde,endMinute,str(self.titel), " ")
-        # elif self.intend == "bearbeiten" and self.art == "Termin":
-        #     #alel bearbeitungsfälle
-        #     terminBearbeiten(jahr,monat,tag,stunde,minute,titel)
-        # elif self.intend == "verschieben" and self.art == "Termin":
+        # elif self.intend == "bearbeiten": # and self.art == "Termin":
+        #      #mit neuen titel
+        #      if self.neueUhrzeit == None:
+        #         terminBearbeiten(jahr,monat,tag,stunde,minute,titel)
+        #      elif self.neueUhrzeit != None:
+        #          terminBearbeiten(jahr,monat,tag,stunde,minute,neueStunde,neueMinute,endStunde,endMinute)
+        #elif self.intend == "verschieben": # and self.art == "Termin":
         #     #alel bearbeitungsfälle
         #     terminBearbeiten(jahr,monat,tag,stunde,minute,titel)    
-        # elif self.intend == "loeschen" and self.art == "Termin":
-        #     terminloeschen(jahr,monat,tag,stunde,minute)
-        # elif self.intend == "anzeigen" and self.art == "Termin":
-        #     terminanzeigen(jahr,monat,tag)
+        # elif self.intend == "loeschen": # and self.art == "Termin":
+        #      terminloeschen(jahr,monat,tag,stunde,minute)
+        elif self.intend == "anzeigen": # and self.art == "Termin":
+              terminanzeigen(jahr,monat,tag)
         # elif self.intend == "erstellen" and self.art == "Kalender":
         #     kalenderAnlegen(titel)
         # elif self.intend == "loeschen" and self.art == "Kalender":
-        #     kalenderLoeschen(titel)
+        #     kalenderLoeschen(titelpfanni12)
 
 
         

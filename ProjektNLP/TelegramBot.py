@@ -1,10 +1,11 @@
 
 #from NLP_Calendar.Logik import Logik
+from typing import no_type_check
 import telebot
 import spacy
 from  Logik import *
 from telebot import types
-
+#Boolean zum überprüfen der ersten Nachricht
 ersteUserNachricht=True
 #TheBotler
 tokenAPI = '1816801935:AAHAH98soREBBJvN2MQOAT4FaaCByDevG9w'
@@ -14,34 +15,27 @@ labCoat = u'\U0001F97C'
 robot= u'\U0001F916'
 
 bot = telebot.TeleBot(tokenAPI)
+#Commands
 @bot.message_handler(commands=['start'])
 def echo_message(message):
     chat_id = message.chat.id
     bot.send_message(chat_id,"Der Botler ist ihr persönlicher Assistent und verwaltet Ihren Terminkalender\nmit'/help' erhalten Sie eine ausführliche beschreibung aller Funktionalitäten.\nMöge die Organisation deiner Zeit mit dir sein!")
     bot.send_message(chat_id, "Ihr Botler wurde gestartet geben Sie einen Satz ein"+labCoat)
-    
-    
-    print("stratet")
+
+
 @bot.message_handler(commands=['help'])
 def echo_message(message):
     chat_id= message.chat.id
     bot.send_message(chat_id,"Der Botler ist ihr persönlicher Assistent und hilft Ihnen dabei Ordnung in ihre Termine zu bringen"+robot+"\n\nMit dem Botler kannst du Google Calender Termine anlegen,anzeigen,löschen,ändern oder verschieben\n\n""Dazu kannst du einfach einen Satz schreiben, der Botler erledigt den Rest und Fragt zur Not nochmal nach.\n\n\nMit Informationen über Art des Termins,Datum,Uhrzeit und Titel des Termins bist du aber auf der sicheren Seite;)")
 
-@bot.message_handler(func=lambda message: True)
-def echo_message(message):
-    #chatID und eingabe erfassen
-    chat_id = message.chat.id
-    eingabe = message.text
-    setText(eingabe)
-    print("eingabetyp:",type(eingabe))
-
-    #Methoden aufruf und speichern in Objekt
+#Methoden
+def checkAllInputs(userEingabe):
     try:
-        pp.titel = getTitel(eingabe)
+        pp.titel = getTitel(userEingabe)
     except:
         pp.titel=None
     try:
-        pp.intend =getIntend(eingabe,checkActionKind())
+        pp.intend =getIntend(userEingabe,checkActionKind())
     except:
         pp.intend=None
     try:
@@ -54,42 +48,26 @@ def echo_message(message):
         pp.enduhrzeit=None
     try:
         #pp.datum=getDateText(eingabe)
-        pp.datum=getDatum(getDateText(eingabe))
-        print(type(pp.datum))
-        print(pp.datum)
-        #pp.datum = datetime.strptime(pp.datum, "%d" "." "%m" "." "%Y").date()
-        print(type(pp.datum))
+        pp.datum=getDatum(getDateText(userEingabe))
     except: 
         pp.datum=None
-    
-    print("das dict:") 
-    print(pp.__dict__)
 
-    #pp.datum = datetime(2021,6,10)
-    pp.ausgeben()
-    pp.testest()
-    
-    #Bot Antwort vorbereiten
-    intendCheck(chat_id,pp.__dict__)
-    try:print(checkDicForMissingValue(pp.__dict__,pp.intend))
-    except:print("kein Intend gefunden")
+def formatAndSendMessages(chat_id):
+    """Sendet erkannte elemente an Nutzer wenn Vollständig"""
+    #Nachrichten Formatieren
     chatTitel = "Titel lautet: " + str(pp.titel)
     chatUhrzeit = "Anfangsuhrzeit ist: " + str(pp.uhrzeit) + " Uhr"
     chatEndUhrzeit = "Enduhrzeit ist: " + str(pp.enduhrzeit) + " Uhr"    
     chatIntend="Erkannter intend ist: "+str(pp.intend)
     chatDatum="geplates Datum ist der: "+str(pp.datum)
-    #Bot Antwort senden
-    try:
-        bot.send_message(chat_id,missingValueNachfrage(chat_id,checkDicForMissingValue(pp.__dict__,pp.intend)))
-    except:
-        bot.send_message(chat_id, chatTitel)
-        bot.send_message(chat_id, chatUhrzeit)
-        bot.send_message(chat_id, chatEndUhrzeit)
-        bot.send_message(chat_id, chatIntend)
-        bot.send_message(chat_id, chatDatum)
+    #Nachrichten an Nutzer senden
+    bot.send_message(chat_id, chatTitel)
+    bot.send_message(chat_id, chatUhrzeit)
+    bot.send_message(chat_id, chatEndUhrzeit)
+    bot.send_message(chat_id, chatIntend)
+    bot.send_message(chat_id, chatDatum)
 
-
-#Methoden
+    
 def missingValueNachfrage(chat_id, missingValues):
     for element in missingValues:
         if(element=='titel'):
@@ -121,7 +99,66 @@ def checkDicForMissingValue(ppDict,intend):
         if(ppDict[element]==None):
             missingElement.append(element)
         
+        
     return missingElement
+
+def safeGivenElements(ppDict,intend):
+    googleMethoden={'erstellen':['titel','intend','uhrzeit','enduhrzeit','datum'],'zeige an':['datum'],'aendern':['titel','intend','uhrzeit','enduhrzeit','datum'],'loeschen':['uhrzeit','datum'],'verschiebe':['uhrzeit','enduhrzeit','datum']}
+    necessaryInput=googleMethoden[intend]
+    i=0
+    givenElement=[]
+    for element in necessaryInput:
+        if i==0:
+            pp.titel=element
+        elif i==1:
+            pp.intend=element
+        elif i==2:
+            pp.uhrzeit=element
+        elif i==3:
+            pp.enduhrzeit=element
+        elif i==4:
+            pp.datum=element
+    
+
+#Message Handler
+@bot.message_handler(func=lambda message: True)
+def echo_message(message):
+    #chatID und eingabe erfassen
+    chat_id = message.chat.id
+    eingabe = message.text
+    setText(eingabe)
+    global ersteUserNachricht
+
+    if (ersteUserNachricht==True):
+        checkAllInputs(eingabe)
+        if(checkDicForMissingValue(pp.__dict__,pp.intend)==[]):
+            formatAndSendMessages(chat_id)
+            print(ersteUserNachricht)
+        else:
+            intendCheck(chat_id,pp.__dict__)
+            missingValueArray=checkDicForMissingValue(pp.__dict__,pp.intend)
+            safeGivenElements(pp.__dict__,pp.intend)
+            ersteUserNachricht =False
+            missingValueNachfrage(chat_id,missingValueArray)
+            print(ersteUserNachricht)
+            
+    else:
+        print(pp.titel,pp.intend,pp.uhrzeit,pp.enduhrzeit,pp.datum)
+        
+
+
+
+
+    
+
+    #pp.ausgeben()
+    #pp.testest()
+    #Bot Antwort vorbereiten
+    #intendCheck(chat_id,pp.__dict__)
+
+
+
+
 
 
 bot.polling()

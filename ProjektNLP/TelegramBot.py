@@ -30,6 +30,7 @@ def echo_message(message):
 
 #Methoden
 def checkAllInputs(userEingabe):
+    setText(userEingabe)
     try:
         pp.titel = getTitel(userEingabe)
     except:
@@ -38,6 +39,12 @@ def checkAllInputs(userEingabe):
         pp.intend =getIntend(userEingabe,checkActionKind())
     except:
         pp.intend=None
+    try:
+        pp.art = checkActionKind(userEingabe)
+        print("die ART:")
+        print(pp.art)
+    except:
+        pp.art = None
     try:
         pp.uhrzeit = getUhrzeit(0)
     except:
@@ -78,30 +85,32 @@ def missingValueNachfrage(chat_id, missingValues):
             bot.send_message(chat_id,"In deinem Satz ist kein Datum genannt\n Bitte gebe ein Datum an wie z.B 3. Juni/01.01.2021 oder nächsten Mittwoch")
 
 
+
 def intendCheck(chat_id,ppDict):
     if(ppDict['intend']==None):
         markup = types.ReplyKeyboardMarkup(row_width=2)
-        itembtn1 = types.KeyboardButton('Anzeigen')
-        itembtn2 = types.KeyboardButton('Erstellen')
+        itembtn1 = types.KeyboardButton('zeige an')
+        itembtn2 = types.KeyboardButton('erstellen')
         itembtn3 = types.KeyboardButton('Bearbeiten')
-        itembtn4 = types.KeyboardButton('Verschieben')
-        itembtn5 = types.KeyboardButton('Loeschen')
+        itembtn4 = types.KeyboardButton('verschiebe')
+        itembtn5 = types.KeyboardButton('loeschen')
         markup.add(itembtn1, itembtn2, itembtn3,itembtn4,itembtn5)
-        bot.send_message(chat_id, "Wähle einen Intent aus:", reply_markup=markup)     
+        bot.send_message(chat_id, "Wähle einen Intent aus:", reply_markup=markup)
 
 def checkDicForMissingValue(ppDict,intend):
-    print(intend)
-    googleMethoden={'erstellen':['titel','intend','uhrzeit','enduhrzeit','datum'],'zeige an':['datum'],'aendern':['titel','intend','uhrzeit','enduhrzeit','datum'],'loeschen':['uhrzeit','datum'],'verschiebe':['uhrzeit','enduhrzeit','datum']}
-    necessaryInput=googleMethoden[intend]
-    missingElement=[]
-    print(type(missingElement))
-    for element in necessaryInput:
-        print(element+" for schleife Funkitioniert") 
-        if(ppDict[element]==None):
-            missingElement.append(element)
-        
-        
-    return missingElement
+    try:
+        print(intend)
+        googleMethoden={'erstellen':['titel','intend','uhrzeit','enduhrzeit','datum'],'zeige an':['datum'],'aendern':['titel','intend','uhrzeit','enduhrzeit','datum'],'loeschen':['uhrzeit','datum'],'verschiebe':['uhrzeit','enduhrzeit','datum']}
+        necessaryInput=googleMethoden[intend]
+        missingElement=[]
+        print(type(missingElement))
+        for element in necessaryInput:
+            print(element+" for schleife Funkitioniert") 
+            if(ppDict[element]==None):
+                missingElement.append(element)
+        return missingElement
+    except:
+        print("etwas ist schiefgelaufen")
 
 def checkSpecificInput(userEingabe,chat_id):
     try:
@@ -152,19 +161,32 @@ def echo_message(message):
     print(ersteUserNachricht)
     if (ersteUserNachricht==True):
         checkAllInputs(eingabe)
+        print(pp.__dict__)
         if(checkDicForMissingValue(pp.__dict__,pp.intend)==[]):
             formatAndSendMessages(chat_id)
             print(ersteUserNachricht)
             bot.send_message(chat_id, pp.testest())
             ersteUserNachricht=True
-        else:
-            intendCheck(chat_id,pp.__dict__)
+
+            # if(pp.intend == None):
+            #     intendCheck(chat_id,pp.__dict__)
+            #     pp.intend = eingabe
+    if pp.intend != "erstellen" or pp.intend != "aendern" or pp.intend !=  "loeschen" or pp.intend != "verschiebe" or pp.intend !=  "zeige an":
+        
+        intendCheck(chat_id,pp.__dict__)
+        print("hier ist es gerade")
+        print(pp.__dict__)
+        print(eingabe)
+        pp.intend = eingabe
+        print(pp.__dict__)
+        ersteUserNachricht = False
+        if pp.intend == "erstellen" or pp.intend == "aendern" or pp.intend ==  "loeschen" or pp.intend == "verschiebe" or pp.intend ==  "zeige an":
             missingValueArray=checkDicForMissingValue(pp.__dict__,pp.intend)
             ersteUserNachricht =False
             missingValueNachfrage(chat_id,missingValueArray)
             print(pp.__dict__)
             
-    else:
+    if ersteUserNachricht == False:
         print("2.Else Schelife wurde erreicht")
         checkSpecificInput(eingabe,chat_id)
         print(pp.__dict__)
@@ -172,26 +194,5 @@ def echo_message(message):
             formatAndSendMessages(chat_id)
             bot.send_message(chat_id, pp.testest())
             ersteUserNachricht=True
-
-        
-
-
-        
-        
-
-
-
-
-    
-
-    #pp.ausgeben()
-    #pp.testest()
-    #Bot Antwort vorbereiten
-    #intendCheck(chat_id,pp.__dict__)
-
-
-
-
-
 
 bot.polling()

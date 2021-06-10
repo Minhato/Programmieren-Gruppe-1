@@ -118,6 +118,9 @@ def terminloeschen(jahr,monat,tag,startStunde,startMinute):
      eventID= event['id']
      print("ID gefunden")
      gac.service.events().delete(calendarId= gac.getId('TestKalender'), eventId= eventID).execute()
+  return "Termin wurde erfolgreich gelöscht"
+  
+
 
 #setKalender('TestKalender')
 #terminAnlegen(2021,6,9,23,40,23,55,"Bugra zockt","am feeden")

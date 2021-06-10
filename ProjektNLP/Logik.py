@@ -11,24 +11,27 @@ from re import*
 nlp=spacy.load("de_core_news_sm")
 matcher=Matcher(nlp.vocab)
 
-text="Lege einen Termin für Dienstag um 14 Uhr bis 14:30 mit dem Titel Hallo an"
+text="Erstelle einen Termin"
 #text = ""
 #Doc ist text als Spacy Doc Objekt
 doc =  nlp(text)
 bereinigt=" ".join([token.text for token in doc if not token.is_stop and not token.is_punct])
 
+print("bereingiter Text:")
+print(bereinigt)
 #Doc mit entfernten Stopwords
 noStopwordDoc=nlp(bereinigt)
 
 tokenListe=[]
 
 def setText(eingabe):
-    global text, doc, bereinigt 
+    global text, doc, bereinigt, noStopwordDoc
     text = eingabe
     text=text+"."
     #Doc ist text als Spacy Doc Objekt
     doc =  nlp(text)
     bereinigt=" ".join([token.text for token in doc if not token.is_stop and not token.is_punct])
+    noStopwordDoc = nlp(bereinigt)
 
 
 
@@ -38,21 +41,34 @@ def getTokenList():
         if(token.is_stop == False or token.pos_=="NOUN"):
             tokenListe.append(token.lemma_)
     
-def checkActionKind():
+def checkActionKind(usereingabe):
+    print("nostopword")
+    print(noStopwordDoc)
+    setText(usereingabe)
+    # for token in noStopwordDoc:
+    #     if(token.pos_=="NOUN"):
+    #         print(token.text)
+    #         if(token.text=="Kalender"):
+    #             return "Kalender"
+    #         if(token.text=="Termin"or"Meeting"or"Treffen"):
+    #             print("Der TOKEN HIER IST" + token.text)
+    #             return "Termin"
+    #         if(token.text=="Geburtstag"):
+    #             return"Geburtstag"
     for token in noStopwordDoc:
-        if(token.pos_=="NOUN"):
-            if(token.text=="Kalender"):
-                return "Kalender"
-            if(token.text=="Termin"or"Meeting"or"Treffen"):
-                return "Termin"
-            if(token.text=="Geburtstag"):
-                return"Geburtstag"
+        if(token.text=="Kalender"):
+            return "Kalender"
+        elif(token.text=="Termin"or token.text == "Meeting"or token.text =="Treffen"):
+            print("Der TOKEN HIER IST" + token.text)
+            return "Termin"
+        elif(token.text=="Geburtstag"):
+            return"Geburtstag"
 
 def getIntend(userInput,kindOfRequest):
     matcher=Matcher(nlp.vocab)
     userInput=userInput+"."
     #List of Intends für mögliche aktionen für den matcher.
-    listOfIntends=["anlegen","anzeigen","machen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","Lege","Ändere","Lösche","Erstelle","Verschiebe","Verlege","Mache","zeige"]
+    listOfIntends=["anlegen","anzeigen","machen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","Lege","Ändere","lösche","erstelle","verschiebe","verlege","mache","zeige"]
     #Pattern anlegen
     patterns=[
         [{"LOWER":"erstelle"},{"POS":"DET"},{"TEXT":kindOfRequest}],
@@ -93,12 +109,6 @@ def getIntend(userInput,kindOfRequest):
             else:
                 return"kein pattern für Intend gefunden"
     
-
-
-
-
-
-
 
 def calculateWithWeekdays(requestedWeekday):
     """Gibt für einen gewünschten Wochentag das entsprechende Datum zurück"""
@@ -246,7 +256,7 @@ def getTitel(text):
     if not matches: 
         print("Keinen Titel gefunden was wollen Sie als Titel haben?")
         #input bla bla into Titel
-getTitel("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab")
+#getTitel("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab")
 
 
 def getUhrzeit(index):
@@ -268,10 +278,6 @@ def getUhrzeit(index):
     except IndexError:
         print("Keine Uhrzeiten gefunden")
         return None 
-
-setText("Erstelle einen Termin um 14 Uhr mit dem Titel JOO")
-print("gesezter Text " + text )
-print("das ist die Uhrzeit " + getUhrzeit(0))
 
 def kalenderEintrag(self):
     datumAlsDate = datetime.strptime( (self.datum,"%d" "." "%m" "." "%Y"))
@@ -359,35 +365,11 @@ class Logik(object):
         #elif self.intend == "verschieben": # and self.art == "Termin":
         #     #alel bearbeitungsfälle
         #     terminBearbeiten(jahr,monat,tag,stunde,minute,titel)    
-        # elif self.intend == "loeschen": # and self.art == "Termin":
-        #      terminloeschen(jahr,monat,tag,stunde,minute)
+        elif self.intend == "loeschen": # and self.art == "Termin":
+              terminloeschen(jahr,monat,tag,stunde,minute)
         elif self.intend == "zeige an": # and self.art == "Termin":
-            print("termine werden angezeigt")
-            #print(terminanzeigen(jahr,monat,tag))
             return terminanzeigen(jahr,monat,tag)
-        # elif self.intend == "erstellen" and self.art == "Kalender":
-        #     kalenderAnlegen(titel)
-        # elif self.intend == "loeschen" and self.art == "Kalender":
-        #     kalenderLoeschen(titelpfanni12)
-
-
-        
-
-
-p = Logik()
-p.titel = getTitel("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab")
-print("Objekt", p.titel)
-p.datum = getIntend("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab ",checkActionKind()) 
-
-
-#getUhrzeit()
-#UserEvent checkt welche Infos vom User schon gegeben wurden           
-# userEvent={
-#     "eventKind" : checkActionKind(),
-#     "intend" : getIntend(checkActionKind()),
-#     "Datum":getDatum(),
-#     "Zeit":"testZeit",
-#     "Ort": getLocation(),
-#     "Aktivität":"Testaktivität",
-#     "Erinnerung":True,
-# }
+        elif self.intend == "erstellen" and self.art == "Kalender":
+             kalenderAnlegen(titel)
+        elif self.intend == "loeschen" and self.art == "Kalender":
+             return kalenderLoeschen(titel)

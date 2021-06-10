@@ -1,10 +1,12 @@
 import datetime
 from pprint import pprint
 import sys
+from numpy import append
 from oauth2client import client
 from googleapiclient import sample_tools
 from pyasn1.type.constraint import ValueRangeConstraint
 import GoogleAPIConnection as gac
+#from TelegramBot import bot, chat_id
 
 def kalenderAnlegen(kalenderName):
   """Zum erstellen eines neuen Kalender (Minh)"""
@@ -22,6 +24,7 @@ def kalenderLoeschen(kalender):
   gac.service.calendars().delete(calendarId= id).execute()
 
 def terminAnlegen(jahr, monat, tag, startStunde, startMinute, endStunde, endMinute, summary, description):
+
     """ Zum Anlegen eines neuen Termin (Minh) """
     startZeit = str(datetime.datetime(jahr, monat, tag, startStunde, startMinute)).replace(" ","T")
     endZeit = str(datetime.datetime(jahr,monat,tag,endStunde,endMinute)).replace(" ","T")
@@ -53,26 +56,24 @@ def terminAnlegen(jahr, monat, tag, startStunde, startMinute, endStunde, endMinu
     id = gac.getId("TestKalender")
     event = gac.service.events().insert(calendarId=id, body=event).execute()
     print ('Event created: %s' % (event.get('htmlLink')))
+    nachricht = "Termin erstellt"
+    return nachricht
 
 def terminanzeigen(jahr, monat, tag,):
   """Zum anzeigen aller Termine an dem jeweiligen Tag (Minh) """
   events = gac.service.events().list(calendarId= gac.getId('TestKalender')).execute()
   datum = str(datetime.date(jahr,monat,tag))
   listeDerEvents = []
+  listeAlsString = ""
   for event in events['items']:
-     if datum in event.get('start')['dateTime']: 
+    if datum in event.get('start')['dateTime']:
       print( event.get('summary')+ " am " + event.get('start')['dateTime'])
       variable = event.get('start')['dateTime']
-      #listeDerEvents = event.get('summary')+ " um " + event.get('start')['dateTime'] #das alte
-      listeDerEvents =  event.get('summary')+ " um " + str(datetime.datetime.strptime(variable,("%Y-%m-%d" "T" "%H:%M:%S" "%z")).strftime("%d.%m.%Y" " um " "%H:%M" "Uhr"))
-      #variable = event.get('start')['dateTime']
+      listeDerEvents.append( event.get('summary')+ " am " + str(datetime.datetime.strptime(variable,("%Y-%m-%d" "T" "%H:%M:%S" "%z")).strftime("%d.%m.%Y" " um " "%H:%M" "Uhr")))
       variable = datetime.datetime.strptime(variable,("%Y-%m-%d" "T" "%H:%M:%S" "%z")).strftime("%d.%m.%Y" "um" "%H:%M" "Uhr") #2021-06-15T03:00:00+02:00
-      #variable = datetime.datetime.strptime(variable, "%Y-%m-%d" "T" "%H:%M:%S" "%z")
-      print("variable: ")
-      print(type(variable))
-      print(variable)
-  return listeDerEvents
-  #TO:DO Methode für antwort in Telegram
+  for werte in listeDerEvents:
+    listeAlsString += str(werte) + "\n"
+  return listeAlsString
 
 def terminBearbeiten(jahr,monat,tag,stunde,minute,titel):
   """Zum Termin Bearbeiten  """

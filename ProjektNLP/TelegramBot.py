@@ -90,6 +90,7 @@ def intendCheck(chat_id,ppDict):
         bot.send_message(chat_id, "Wähle einen Intent aus:", reply_markup=markup)     
 
 def checkDicForMissingValue(ppDict,intend):
+    print(intend)
     googleMethoden={'erstellen':['titel','intend','uhrzeit','enduhrzeit','datum'],'zeige an':['datum'],'aendern':['titel','intend','uhrzeit','enduhrzeit','datum'],'loeschen':['uhrzeit','datum'],'verschiebe':['uhrzeit','enduhrzeit','datum']}
     necessaryInput=googleMethoden[intend]
     missingElement=[]
@@ -102,22 +103,42 @@ def checkDicForMissingValue(ppDict,intend):
         
     return missingElement
 
-def safeGivenElements(ppDict,intend):
-    googleMethoden={'erstellen':['titel','intend','uhrzeit','enduhrzeit','datum'],'zeige an':['datum'],'aendern':['titel','intend','uhrzeit','enduhrzeit','datum'],'loeschen':['uhrzeit','datum'],'verschiebe':['uhrzeit','enduhrzeit','datum']}
-    necessaryInput=googleMethoden[intend]
-    i=0
-    givenElement=[]
-    for element in necessaryInput:
-        if i==0:
-            pp.titel=element
-        elif i==1:
-            pp.intend=element
-        elif i==2:
-            pp.uhrzeit=element
-        elif i==3:
-            pp.enduhrzeit=element
-        elif i==4:
-            pp.datum=element
+def checkSpecificInput(userEingabe,chat_id):
+    try:
+        if pp.titel==None:
+            print("Er geht in die Titel schleife rein")
+            pp.titel=getTitel(userEingabe)
+            if(pp.uhrzeit==None):
+                bot.send_message(chat_id,"Kein Titel erkannt,bitte nochmals angeben")
+    except:
+        print("Except wird aufgerufen")
+        bot.send_message(chat_id,"Titel fehlt immernoch")
+    try:
+        if pp.intend==None:
+            pp.intend=getIntend(userEingabe,checkActionKind())
+    except:
+        bot.send_message(chat_id,"Kein Intend erkannt,bitte erneut angeben")
+    try:
+        if pp.uhrzeit==None:
+            pp.uhrzeit=getUhrzeit(0)
+            if(pp.uhrzeit==None):
+                bot.send_message(chat_id,"keine StartUhrzeit erkennt,bitte erneut angeben")
+    except:
+        bot.send_message(chat_id,"keine StartUhrzeit erkennt,bitte erneut angeben")
+    try:
+        if pp.enduhrzeit==None:
+            print("enduhrzeit wird ausgeführt")
+            pp.enduhrzeit=getUhrzeit(1)
+    except:
+        pass
+    try:
+        if pp.datum==None:
+            pp.datum=getDatum(getDateText(userEingabe))
+            if(pp.datum==None):
+                bot.send_message(chat_id,"Kein Datum gefunden bitte das Datum im dd.dd.dddd Format eingeben")
+    except:
+        bot.send_message(chat_id,"Kein Datum gefunden bitte das Datum im dd.dd.dddd Format eingeben")
+
     
 
 #Message Handler
@@ -128,28 +149,34 @@ def echo_message(message):
     eingabe = message.text
     setText(eingabe)
     global ersteUserNachricht
-
+    print(ersteUserNachricht)
     if (ersteUserNachricht==True):
         checkAllInputs(eingabe)
         if(checkDicForMissingValue(pp.__dict__,pp.intend)==[]):
             formatAndSendMessages(chat_id)
-            pp.testest()
             print(ersteUserNachricht)
             bot.send_message(chat_id, pp.testest())
+            ersteUserNachricht=True
         else:
             intendCheck(chat_id,pp.__dict__)
             missingValueArray=checkDicForMissingValue(pp.__dict__,pp.intend)
-            safeGivenElements(pp.__dict__,pp.intend)
             ersteUserNachricht =False
             missingValueNachfrage(chat_id,missingValueArray)
-            #pp.testest()
-            print("TEST TEST return: ")
-            print(pp.testest)
-            bot.send_message(chat_id, str(pp.testest()))
-            print(ersteUserNachricht)
+            print(pp.__dict__)
             
     else:
-        print(pp.titel,pp.intend,pp.uhrzeit,pp.enduhrzeit,pp.datum)
+        print("2.Else Schelife wurde erreicht")
+        checkSpecificInput(eingabe,chat_id)
+        print(pp.__dict__)
+        if(checkDicForMissingValue(pp.__dict__,pp.intend)==[]):
+            formatAndSendMessages(chat_id)
+            bot.send_message(chat_id, pp.testest())
+            ersteUserNachricht=True
+
+        
+
+
+        
         
 
 

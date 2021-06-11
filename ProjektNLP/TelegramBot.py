@@ -172,7 +172,6 @@ def echo_message(message):
             #     intendCheck(chat_id,pp.__dict__)
             #     pp.intend = eingabe
     if pp.intend != "erstellen" or pp.intend != "aendern" or pp.intend !=  "loeschen" or pp.intend != "verschiebe" or pp.intend !=  "zeige an":
-        
         intendCheck(chat_id,pp.__dict__)
         print("hier ist es gerade")
         print(pp.__dict__)

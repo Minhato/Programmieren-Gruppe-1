@@ -353,7 +353,7 @@ class Logik(object):
 
         titel = "TEST"
 
-        if self.intend == "erstellen": # and self.art == "Termin":
+        if self.intend == "erstellen" and self.art == "Termin":
             print("Termin wird angelegt")
             return terminAnlegen(jahr,monat,tag, stunde,minute,endStunde,endMinute,str(self.titel), " ")
         # elif self.intend == "bearbeiten": # and self.art == "Termin":
@@ -365,9 +365,9 @@ class Logik(object):
         #elif self.intend == "verschieben": # and self.art == "Termin":
         #     #alel bearbeitungsfälle
         #     terminBearbeiten(jahr,monat,tag,stunde,minute,titel)    
-        elif self.intend == "loeschen": # and self.art == "Termin":
-              terminloeschen(jahr,monat,tag,stunde,minute)
-        elif self.intend == "zeige an": # and self.art == "Termin":
+        elif self.intend == "loeschen" and self.art == "Termin":
+            return terminloeschen(jahr,monat,tag,stunde,minute)
+        elif self.intend == "zeige an" and self.art == "Termin":
             return terminanzeigen(jahr,monat,tag)
         elif self.intend == "erstellen" and self.art == "Kalender":
              kalenderAnlegen(titel)

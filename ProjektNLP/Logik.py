@@ -351,8 +351,6 @@ class Logik(object):
 
             print("Daten in testetst Fehlerhaft")
 
-        titel = "TEST"
-
         if self.intend == "erstellen" and self.art == "Termin":
             print("Termin wird angelegt")
             return terminAnlegen(jahr,monat,tag, stunde,minute,endStunde,endMinute,str(self.titel), " ")
@@ -370,6 +368,6 @@ class Logik(object):
         elif self.intend == "zeige an" and self.art == "Termin":
             return terminanzeigen(jahr,monat,tag)
         elif self.intend == "erstellen" and self.art == "Kalender":
-             kalenderAnlegen(titel)
+             kalenderAnlegen(self.titel)
         elif self.intend == "loeschen" and self.art == "Kalender":
-             return kalenderLoeschen(titel)
+             return kalenderLoeschen(self.titel)

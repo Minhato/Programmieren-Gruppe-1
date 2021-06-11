@@ -17,11 +17,13 @@ def kalenderAnlegen(kalenderName):
     }
   created_calendar = gac.service.calendars().insert(body=calendar).execute()
   print (created_calendar['id'])
+  return "Kalender wurde angelegt!"
 
 def kalenderLoeschen(kalender):
   """Zum löschen eines erstellten Kalender (Minh)  """
   id = gac.getId(kalender)
   gac.service.calendars().delete(calendarId= id).execute()
+  return "Kalender wurde gelöscht!"
 
 def terminAnlegen(jahr, monat, tag, startStunde, startMinute, endStunde, endMinute, summary, description):
 

@@ -368,6 +368,6 @@ class Logik(object):
         elif self.intend == "zeige an" and self.art == "Termin":
             return terminanzeigen(jahr,monat,tag)
         elif self.intend == "erstellen" and self.art == "Kalender":
-             kalenderAnlegen(self.titel)
+            return kalenderAnlegen(str(self.titel))
         elif self.intend == "loeschen" and self.art == "Kalender":
-             return kalenderLoeschen(self.titel)
+             return kalenderLoeschen(str(self.titel))

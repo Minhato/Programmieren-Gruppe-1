@@ -21,6 +21,8 @@ def echo_message(message):
     chat_id = message.chat.id
     bot.send_message(chat_id,"Der Botler ist ihr persönlicher Assistent und verwaltet Ihren Terminkalender\nmit'/help' erhalten Sie eine ausführliche beschreibung aller Funktionalitäten.\nMöge die Organisation deiner Zeit mit dir sein!")
     bot.send_message(chat_id, "Ihr Botler wurde gestartet geben Sie einen Satz ein"+labCoat)
+    
+
 
 
 @bot.message_handler(commands=['help'])
@@ -36,7 +38,7 @@ def checkAllInputs(userEingabe):
     except:
         pp.titel=None
     try:
-        pp.intend =getIntend(userEingabe,checkActionKind())
+        pp.intend =getIntend(userEingabe,checkActionKind(userEingabe))
     except:
         pp.intend=None
     try:
@@ -100,8 +102,13 @@ def intendCheck(chat_id,ppDict):
 def checkDicForMissingValue(ppDict,intend):
     try:
         print(intend)
-        googleMethoden={'erstellen':['titel','intend','uhrzeit','enduhrzeit','datum'],'zeige an':['datum'],'aendern':['titel','intend','uhrzeit','enduhrzeit','datum'],'loeschen':['uhrzeit','datum'],'verschiebe':['uhrzeit','enduhrzeit','datum']}
-        necessaryInput=googleMethoden[intend]
+        if pp.art=="Termin":
+            googleMethodenTermin={'erstellen':['titel','intend','uhrzeit','enduhrzeit','datum'],'zeige an':['datum'],'aendern':['titel','intend','uhrzeit','enduhrzeit','datum'],'loeschen':['uhrzeit','datum'],'verschiebe':['uhrzeit','enduhrzeit','datum']}
+            necessaryInput=googleMethodenTermin[intend]
+        if pp.art=="Kalender":
+            googleMethodenKalender={'erstellen':['titel'],'loeschen':['titel']}
+            necessaryInput=googleMethodenKalender[intend]
+
         missingElement=[]
         print(type(missingElement))
         for element in necessaryInput:
@@ -117,7 +124,7 @@ def checkSpecificInput(userEingabe,chat_id):
         if pp.titel==None:
             print("Er geht in die Titel schleife rein")
             pp.titel=getTitel(userEingabe)
-            if(pp.uhrzeit==None):
+            if(pp.titel==None):
                 bot.send_message(chat_id,"Kein Titel erkannt,bitte nochmals angeben")
     except:
         print("Except wird aufgerufen")
@@ -159,39 +166,42 @@ def echo_message(message):
     setText(eingabe)
     global ersteUserNachricht
     print(ersteUserNachricht)
+    intendListe={'erstellen','aendern','loeschen','verschiebe','zeige an'}
+    #If Abrage wird aufgeführt wenn erste user Nachricht==True->checkt alle Inputs
     if (ersteUserNachricht==True):
+        #setzt alle Inputs->falls Leer ==None
         checkAllInputs(eingabe)
         print(pp.__dict__)
+        #Wenn keine missing Inputs gefunden wird message gesendet und Action ausgeführt
         if(checkDicForMissingValue(pp.__dict__,pp.intend)==[]):
             formatAndSendMessages(chat_id)
             print(ersteUserNachricht)
             bot.send_message(chat_id, pp.testest())
             ersteUserNachricht=True
-
-            # if(pp.intend == None):
-            #     intendCheck(chat_id,pp.__dict__)
-            #     pp.intend = eingabe
-    if pp.intend != "erstellen" or pp.intend != "aendern" or pp.intend !=  "loeschen" or pp.intend != "verschiebe" or pp.intend !=  "zeige an":
+            return
+    if pp.intend not in intendListe:
         intendCheck(chat_id,pp.__dict__)
-        print("hier ist es gerade")
         print(pp.__dict__)
         print(eingabe)
+        print(pp.intend)
         pp.intend = eingabe
         print(pp.__dict__)
         ersteUserNachricht = False
-        if pp.intend == "erstellen" or pp.intend == "aendern" or pp.intend ==  "loeschen" or pp.intend == "verschiebe" or pp.intend ==  "zeige an":
-            missingValueArray=checkDicForMissingValue(pp.__dict__,pp.intend)
-            ersteUserNachricht =False
-            missingValueNachfrage(chat_id,missingValueArray)
+    if pp.intend in intendListe:
+        ersteUserNachricht =False
+        if ersteUserNachricht == False:
+            print("2.Else Schelife wurde erreicht")
+            checkSpecificInput(eingabe,chat_id)
             print(pp.__dict__)
-            
-    if ersteUserNachricht == False:
-        print("2.Else Schelife wurde erreicht")
-        checkSpecificInput(eingabe,chat_id)
+            if(checkDicForMissingValue(pp.__dict__,pp.intend)==[]):
+                formatAndSendMessages(chat_id)
+                bot.send_message(chat_id, pp.testest())
+                ersteUserNachricht=True
+
+        missingValueArray=checkDicForMissingValue(pp.__dict__,pp.intend)
+        missingValueNachfrage(chat_id,missingValueArray)
         print(pp.__dict__)
-        if(checkDicForMissingValue(pp.__dict__,pp.intend)==[]):
-            formatAndSendMessages(chat_id)
-            bot.send_message(chat_id, pp.testest())
-            ersteUserNachricht=True
+            
+        
 
 bot.polling()

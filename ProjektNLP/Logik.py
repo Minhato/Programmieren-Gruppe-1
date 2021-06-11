@@ -58,7 +58,7 @@ def checkActionKind(usereingabe):
     for token in noStopwordDoc:
         if(token.text=="Kalender"):
             return "Kalender"
-        elif(token.text=="Termin"or token.text == "Meeting"or token.text =="Treffen"):
+        elif(token.lemma_=="Termin"or token.lemma_ == "Meeting"or token.lemma_ =="Treffen"):
             print("Der TOKEN HIER IST" + token.text)
             return "Termin"
         elif(token.text=="Geburtstag"):
@@ -68,7 +68,7 @@ def getIntend(userInput,kindOfRequest):
     matcher=Matcher(nlp.vocab)
     userInput=userInput+"."
     #List of Intends für mögliche aktionen für den matcher.
-    listOfIntends=["anlegen","anzeigen","machen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","Lege","Ändere","lösche","erstelle","verschiebe","verlege","mache","zeige"]
+    listOfIntends=["anlegen","anzeigen","machen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","lege","ändere","lösche","erstelle","verschiebe","verlege","mache","zeige"]
     #Pattern anlegen
     patterns=[
         [{"LOWER":"erstelle"},{"POS":"DET"},{"TEXT":kindOfRequest}],
@@ -148,9 +148,9 @@ def getDatum(erkannterTag):
     matches= matcher(testDoc)
     
     possibleDate={
-        "heute":heute,
-        "morgen":heute+timedelta(days=1),
-        "übermorgen":heute+timedelta(days=2),
+        "heute":str(heute.strftime('%d' '.' '%m' '.' '%Y') ),
+        "morgen":str((heute+timedelta(days=1)).strftime('%d' '.' '%m' '.' '%Y') ),
+        "übermorgen":str((heute+timedelta(days=2)).strftime('%d' '.' '%m' '.' '%Y') ),
         "Montag":calculateWithWeekdays(0),
         "Dienstag":calculateWithWeekdays(1),
         "Mittwoch":calculateWithWeekdays(2),
@@ -168,14 +168,10 @@ def getDatum(erkannterTag):
             return possibleDate[WeekdayNextWeek]
     
     #for Schleife die für Pattern match getDateNextWeek aufruft
-    
     for match_id,start,end in matches:
         string_id=nlp.vocab.strings[match_id]            
         span=testDoc[start:end]
         datumNextWeek=getDateNextWeek(span.text)
-    
-    
-    
     #return der getDatum Methode
     #deutsches Datum->return des Formatieren Datums
     #Leeres Array==Kein Pattern gefunden->normaler aufruf über dictonary
@@ -211,6 +207,8 @@ def getDateText(userText):
     for token in doc:
         if token.shape_=="dd."or token.shape_=="d."or token.shape_=="d" and token.head.text in MonateValue:
             tag=token.text
+        if token.text=='heute' or token.text=='morgen' or token.text=='übermorgen':
+            return token.text
         if token.shape_=="d.":
             tag="0"+tag
             monat=MonateValue[token.head.text]                

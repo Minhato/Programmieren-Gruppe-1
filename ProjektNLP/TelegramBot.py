@@ -1,10 +1,10 @@
-
 #from NLP_Calendar.Logik import Logik
 from typing import no_type_check
 import telebot
 import spacy
 from  Logik import *
 from telebot import types
+
 #Boolean zum überprüfen der ersten Nachricht
 ersteUserNachricht=True
 #TheBotler
@@ -147,7 +147,11 @@ def checkSpecificInput(userEingabe,chat_id):
     except:
         bot.send_message(chat_id,"Kein Datum gefunden bitte das Datum im dd.dd.dddd Format eingeben")
 
-    
+@bot.message_handler(content_types=['audio'])
+def voice_handler(self):
+    dateiVoice = bot._get_f
+
+
 
 #Message Handler
 @bot.message_handler(func=lambda message: True)

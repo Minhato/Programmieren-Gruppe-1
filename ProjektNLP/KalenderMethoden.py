@@ -77,25 +77,27 @@ def terminanzeigen(jahr, monat, tag,):
     listeAlsString += str(werte) + "\n"
   return listeAlsString
 
-def terminBearbeiten(jahr,monat,tag,stunde,minute,titel):
+def terminTitelBearbeiten(jahr,monat,tag,stunde,minute,titel):
   """Zum Termin Bearbeiten  """
   event = gac.service.events().get(calendarId=gac.getId('TestKalender'), eventId=gac.getEventId(jahr,monat,tag,stunde,minute)).execute()
   event['summary'] = titel
   #print("dieZeit:"+ event['start']['dateTime'])
   #print("endzeit:"+ event['end']['dateTime'])
   updatedEvent = gac.service.events().update(calendarId = gac.getId('TestKalender'), eventId= event['id'], body = event).execute()
+  return "Titel vom Termin geändert"
 
 #print("datetimeeeee "+ datetime.datetime.now().astimezone().replace(microsecond=0).isoformat())
 #terminBearbeiten(2021,6,2,19,0,"neue")
 
 
-def terminBearbeiten(jahr,monat,tag,stunde,minute,neueStunde,neueMinute,endStunde,endMinute):
+def terminVerschiebenNeueUhrzeit(jahr,monat,tag,stunde,minute,neueStunde,neueMinute,endStunde,endMinute):
   """Zum Termin Bearbeiten nur mit neue Uhrzeit """
   event = gac.service.events().get(calendarId=gac.getId('TestKalender'), eventId=gac.getEventId(jahr,monat,tag,stunde,minute)).execute()
   event['start'] ['dateTime'] = datetime.datetime(jahr,monat,tag,neueStunde,neueMinute).astimezone().replace(microsecond=0).isoformat()
   event['end'] ['dateTime'] = datetime.datetime(jahr,monat,tag,endStunde,endMinute).astimezone().replace(microsecond=0).isoformat()
   #print(event['start']['dateTime'])
   updatedEvent = gac.service.events().update(calendarId = gac.getId('TestKalender'), eventId= event['id'], body = event).execute()
+  return "Termin wurde um 2 Stunden verschoben"
 
 #terminBearbeiten(2021,6,2,22,0,21,0,21,30)
 

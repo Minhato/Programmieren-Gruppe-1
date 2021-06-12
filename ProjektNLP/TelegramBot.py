@@ -21,10 +21,7 @@ def echo_message(message):
     chat_id = message.chat.id
     bot.send_message(chat_id,"Der Botler ist ihr persönlicher Assistent und verwaltet Ihren Terminkalender\nmit'/help' erhalten Sie eine ausführliche beschreibung aller Funktionalitäten.\nMöge die Organisation deiner Zeit mit dir sein!")
     bot.send_message(chat_id, "Ihr Botler wurde gestartet geben Sie einen Satz ein"+labCoat)
-    
-
-
-
+ 
 @bot.message_handler(commands=['help'])
 def echo_message(message):
     chat_id= message.chat.id
@@ -93,7 +90,7 @@ def intendCheck(chat_id,ppDict):
         markup = types.ReplyKeyboardMarkup(row_width=2)
         itembtn1 = types.KeyboardButton('zeige an')
         itembtn2 = types.KeyboardButton('erstellen')
-        itembtn3 = types.KeyboardButton('Bearbeiten')
+        itembtn3 = types.KeyboardButton('bearbeiten')
         itembtn4 = types.KeyboardButton('verschiebe')
         itembtn5 = types.KeyboardButton('loeschen')
         markup.add(itembtn1, itembtn2, itembtn3,itembtn4,itembtn5)
@@ -103,7 +100,7 @@ def checkDicForMissingValue(ppDict,intend):
     try:
         print(intend)
         if pp.art=="Termin":
-            googleMethodenTermin={'erstellen':['titel','intend','uhrzeit','enduhrzeit','datum'],'zeige an':['datum'],'aendern':['titel','intend','uhrzeit','enduhrzeit','datum'],'loeschen':['uhrzeit','datum'],'verschiebe':['uhrzeit','enduhrzeit','datum']}
+            googleMethodenTermin={'erstellen':['titel','intend','uhrzeit','enduhrzeit','datum'],'zeige an':['datum'],'bearbeiten':['titel','intend','uhrzeit','enduhrzeit','datum'],'loeschen':['uhrzeit','datum'],'verschiebe':['uhrzeit','enduhrzeit','datum']}
             necessaryInput=googleMethodenTermin[intend]
         if pp.art=="Kalender":
             googleMethodenKalender={'erstellen':['titel'],'loeschen':['titel']}
@@ -166,7 +163,7 @@ def echo_message(message):
     setText(eingabe)
     global ersteUserNachricht
     print(ersteUserNachricht)
-    intendListe={'erstellen','aendern','loeschen','verschiebe','zeige an'}
+    intendListe={'erstellen','bearbeiten','loeschen','verschiebe','zeige an'}
     #If Abrage wird aufgeführt wenn erste user Nachricht==True->checkt alle Inputs
     if (ersteUserNachricht==True):
         #setzt alle Inputs->falls Leer ==None

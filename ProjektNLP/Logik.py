@@ -1,4 +1,4 @@
-from KalenderMethoden import kalenderAnlegen, kalenderLoeschen, kalenderAnlegen, terminAnlegen, terminBearbeiten, terminanzeigen, terminloeschen
+from KalenderMethoden import kalenderAnlegen, kalenderLoeschen, kalenderAnlegen, terminAnlegen, terminBearbeiten, terminTitelBearbeiten, terminVerschiebenNeueUhrzeit, terminanzeigen, terminloeschen
 import spacy
 from spacy.matcher import Matcher
 from spacy.matcher import PhraseMatcher
@@ -68,13 +68,14 @@ def getIntend(userInput,kindOfRequest):
     matcher=Matcher(nlp.vocab)
     userInput=userInput+"."
     #List of Intends für mögliche aktionen für den matcher.
-    listOfIntends=["anlegen","anzeigen","machen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","lege","ändere","lösche","erstelle","verschiebe","verlege","mache","zeige"]
+    listOfIntends=["anlegen","anzeigen","machen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","lege","ändere","lösche","erstelle","verschiebe","verlege","mache","zeige","bearbeite", "bearbeiten"]
     #Pattern anlegen
     patterns=[
         [{"LOWER":"erstelle"},{"POS":"DET"},{"TEXT":kindOfRequest}],
         [{"LOWER":"mache"},{"POS":"DET"},{"TEXT":kindOfRequest}],
         [{"LOWER":"trage"},{"POS":"DET"},{"TEXT":kindOfRequest}],
         [{"LOWER":"ändere"},{"POS":"DET"},{"TEXT":kindOfRequest}],
+        [{"LOWER":"bearbeite"},{"POS":"DET"},{"TEXT":kindOfRequest}],
         [{"LOWER":"lösche"},{"POS":"DET"},{"TEXT":kindOfRequest}],
         [{"LOWER":"lege"},{"POS":"DET"},{"TEXT":kindOfRequest}],
         [{"LOWER":"verschiebe"},{"POS":"DET"},{"TEXT":kindOfRequest}],
@@ -98,8 +99,8 @@ def getIntend(userInput,kindOfRequest):
     if(intend in listOfIntends or len(intend)>7):
             if "lege"in intend.lower() or "erstelle"in intend.lower() or"trage"in intend.lower() or "mache" in intend.lower():
                 return "erstellen"
-            elif "änder" in intend.lower():
-                return "aendern"
+            elif "änder" in intend.lower() or "bearbeite" in intend.lower():
+                return "bearbeiten"
             elif "lösche"in intend.lower():
                 return "loeschen"
             elif "verschiebe"in intend.lower() or "verlege" in intend.lower():
@@ -277,35 +278,35 @@ def getUhrzeit(index):
         print("Keine Uhrzeiten gefunden")
         return None 
 
-def kalenderEintrag(self):
-    datumAlsDate = datetime.strptime( (self.datum,"%d" "." "%m" "." "%Y"))
-    datetime.strftime
-    jahr = datetime.strftime(datumAlsDate,"%Y")
-    monat = datetime.strftime(datumAlsDate,"%m")
-    tag = datetime.strftime(datumAlsDate,"%d")
-    stunde = datetime.strftime(datumAlsDate,"%H")
-    minute = datetime.strftime(datumAlsDate,"%M")
-    endStunde = datetime.strftime(datumAlsDate,"%H")
-    endMinute = datetime.strftime(datumAlsDate,"%M")
-    titel = "TEST"
+# def kalenderEintrag(self):
+#     datumAlsDate = datetime.strptime( (self.datum,"%d" "." "%m" "." "%Y"))
+#     datetime.strftime
+#     jahr = datetime.strftime(datumAlsDate,"%Y")
+#     monat = datetime.strftime(datumAlsDate,"%m")
+#     tag = datetime.strftime(datumAlsDate,"%d")
+#     stunde = datetime.strftime(datumAlsDate,"%H")
+#     minute = datetime.strftime(datumAlsDate,"%M")
+#     endStunde = datetime.strftime(datumAlsDate,"%H")
+#     endMinute = datetime.strftime(datumAlsDate,"%M")
+#     titel = "TEST"
 
-    if self.intend == "erstellen" and self.art == "Termin":
-        print("Termin wird angelegt")
-        terminAnlegen(jahr,monat,tag,stunde,minute,endStunde,endMinute,self.titel, "")
-    elif self.intend == "bearbeiten" and self.art == "Termin":
-        #alel bearbeitungsfälle
-        terminBearbeiten(jahr,monat,tag,stunde,minute,titel)
-    elif self.intend == "verschieben" and self.art == "Termin":
-        #alel bearbeitungsfälle
-        terminBearbeiten(jahr,monat,tag,stunde,minute,titel)    
-    elif self.intend == "loeschen" and self.art == "Termin":
-        terminloeschen(jahr,monat,tag,stunde,minute)
-    elif self.intend == "anzeigen" and self.art == "Termin":
-        terminanzeigen(jahr,monat,tag)
-    elif self.intend == "erstellen" and self.art == "Kalender":
-        kalenderAnlegen(titel)
-    elif self.intend == "loeschen" and self.art == "Kalender":
-        kalenderLoeschen(titel)
+#     if self.intend == "erstellen" and self.art == "Termin":
+#         print("Termin wird angelegt")
+#         terminAnlegen(jahr,monat,tag,stunde,minute,endStunde,endMinute,self.titel, "")
+#     elif self.intend == "bearbeiten" and self.art == "Termin":
+#         #alel bearbeitungsfälle
+#         terminBearbeiten(jahr,monat,tag,stunde,minute,titel)
+#     elif self.intend == "verschieben" and self.art == "Termin":
+#         #alel bearbeitungsfälle
+#         terminBearbeiten(jahr,monat,tag,stunde,minute,titel)    
+#     elif self.intend == "loeschen" and self.art == "Termin":
+#         terminloeschen(jahr,monat,tag,stunde,minute)
+#     elif self.intend == "anzeigen" and self.art == "Termin":
+#         terminanzeigen(jahr,monat,tag)
+#     elif self.intend == "erstellen" and self.art == "Kalender":
+#         kalenderAnlegen(titel)
+#     elif self.intend == "loeschen" and self.art == "Kalender":
+#         kalenderLoeschen(titel)
 
 
 
@@ -330,8 +331,6 @@ class Logik(object):
             tag = int (datetime.strftime(datumAlsDate,"%d"))
         
         elif self.intend == "erstellen": # usw TO:DO
-            pass 
-        try:
             startUhrzeit= datetime.strptime(self.uhrzeit, "%H" ":" "%M")
             endUhrzeit= datetime.strptime(self.enduhrzeit, "%H" ":" "%M")
             #startUhrzeit= datetime.strptime(self.uhrzeit, ) 
@@ -344,18 +343,48 @@ class Logik(object):
             minute = int (datetime.strftime(startUhrzeit,"%M"))
             #neueStunde, neueMinute = 5 #TO:DO
             endStunde = int (datetime.strftime(endUhrzeit,"%H"))
-            endMinute = int (datetime.strftime(endUhrzeit,"%M"))
-        except:
+            endMinute = int (datetime.strftime(endUhrzeit,"%M")) 
 
+        elif self.intend == "bearbeiten":
+            startUhrzeit= datetime.strptime(self.uhrzeit, "%H" ":" "%M")
+            datumAlsDate = datetime.strptime(datum, "%d" "." "%m" "." "%Y")
+            jahr = int (datetime.strftime(datumAlsDate,"%Y"))
+            monat = int (datetime.strftime(datumAlsDate,"%m"))
+            tag = int (datetime.strftime(datumAlsDate,"%d"))
+            stunde = int (datetime.strftime(startUhrzeit,"%H"))
+            minute = int (datetime.strftime(startUhrzeit,"%M"))
+
+        elif self.intend == "verschiebe":
+            startUhrzeit= datetime.strptime(self.uhrzeit, "%H" ":" "%M")
+            neueUhrzeit = startUhrzeit + timedelta(hours= 2)
+            datumAlsDate = datetime.strptime(datum, "%d" "." "%m" "." "%Y")
+            jahr = int (datetime.strftime(datumAlsDate,"%Y"))
+            monat = int (datetime.strftime(datumAlsDate,"%m"))
+            tag = int (datetime.strftime(datumAlsDate,"%d"))
+            stunde = int (datetime.strftime(startUhrzeit,"%H"))
+            minute = int (datetime.strftime(startUhrzeit,"%M"))
+            neueStunde = int (datetime.strftime(neueUhrzeit,"%H"))
+            neueMinute = minute
+            endStunde = neueStunde + 1 
+            endMinute = neueMinute
+
+        if self.intend == "loeschen":
+            datumAlsDate = datetime.strptime(datum, "%d" "." "%m" "." "%Y")
+            startUhrzeit= datetime.strptime(self.uhrzeit, "%H" ":" "%M")
+            jahr = int (datetime.strftime(datumAlsDate,"%Y"))
+            monat = int (datetime.strftime(datumAlsDate,"%m"))
+            tag = int (datetime.strftime(datumAlsDate,"%d"))
+            stunde = int (datetime.strftime(startUhrzeit,"%H"))
+            minute = int (datetime.strftime(startUhrzeit,"%M"))
             print("Daten in testetst Fehlerhaft")
 
         if self.intend == "erstellen" and self.art == "Termin":
             print("Termin wird angelegt")
             return terminAnlegen(jahr,monat,tag, stunde,minute,endStunde,endMinute,str(self.titel), " ")
-        # elif self.intend == "bearbeiten": # and self.art == "Termin":
-        #      #mit neuen titel
-        #      if self.neueUhrzeit == None:
-        #         terminBearbeiten(jahr,monat,tag,stunde,minute,titel)
+        elif self.intend == "bearbeiten" and self.art == "Termin":
+            return terminTitelBearbeiten(jahr,monat,tag,stunde,minute,str(self.titel))
+        elif self.intend == "verschiebe" and self.art == "Termin":
+            return terminVerschiebenNeueUhrzeit(jahr,monat,tag,stunde,minute,neueStunde,neueMinute,endStunde,endMinute )
         #      elif self.neueUhrzeit != None:
         #          terminBearbeiten(jahr,monat,tag,stunde,minute,neueStunde,neueMinute,endStunde,endMinute)
         #elif self.intend == "verschieben": # and self.art == "Termin":

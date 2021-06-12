@@ -124,12 +124,10 @@ def calculateWithWeekdays(requestedWeekday):
         calculatedDate=calculatedDate+timedelta(days=1)
         
         weekdayToday=date.weekday(calculatedDate)
-
-    stringCalculatedDate=str(calculatedDate)
-    formatedDate=datetime.strptime(stringCalculatedDate,'%Y' '-' '%m' '-' '%d').strftime('%d' '.' '%m' '.' '%Y')          #Format verändern auf dd.dd.dddd
-    return str(formatedDate)
+    return calculatedDate
 
 def getDatum(erkannterTag):
+    print("Parameter für erkannter Tag ist:"+erkannterTag)
     #heutigesDatum
     heute=date.today()
     #globale Variable datumNextWeek in die Ergebis der Methode getDateNextWeek gespeichert wird,die in der for schleife der erkannten patterns aufgerufen wird
@@ -138,7 +136,7 @@ def getDatum(erkannterTag):
     datumNlp =nlp(erkannterTag)
     #patterns
     patterns=[
-        [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?" },{"TEXT":{"REGEX":"\w*tag\b"}}],
+        [{"TEXT":"nächste"},{"TEXT":"Woche","OP":"?" },{"TEXT":{"REGEX":"\w*tag\b"}}],
         [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?" },{"TEXT":"Mittwoch"}]
         
         
@@ -163,6 +161,7 @@ def getDatum(erkannterTag):
     #Methode getDateNextWeek wird aufgerufen wenn pattern gematched wird
     def getDateNextWeek(spanText):
         WeekdayNextWeek = spanText.replace("nächsten","").replace("nächste","").replace("Woche","").replace(" ","")
+
         if(heute.weekday()<=possibleDate[WeekdayNextWeek].weekday()):
             return possibleDate[WeekdayNextWeek]+timedelta(days=7)
         else:
@@ -170,22 +169,26 @@ def getDatum(erkannterTag):
     
     #for Schleife die für Pattern match getDateNextWeek aufruft
     for match_id,start,end in matches:
+        print("Pattern wird gematched")
         string_id=nlp.vocab.strings[match_id]            
         span=testDoc[start:end]
+        print(span.text)
         datumNextWeek=getDateNextWeek(span.text)
     #return der getDatum Methode
     #deutsches Datum->return des Formatieren Datums
     #Leeres Array==Kein Pattern gefunden->normaler aufruf über dictonary
     #else->Aufruf der globalen Variable datumNextWeek in die Datum für die nächste Woche gespeichert wurde
     for token in datumNlp:
+        print("Pattern wird nicht gemachted"+str(getDateNextWeek("nächste Woche Montag")))
         if token.shape_=="dd.dd.dddd":
             #Platz zum formatieren des Datums zum google api Standart
             return token.text
     if(matches==[]):
         
-        return possibleDate.get(erkannterTag)
+        return datetime.strptime(str(possibleDate.get(erkannterTag)),'%Y' '-' '%m' '-' '%d').strftime('%d' '.' '%m' '.' '%Y')
     else:
-        return datumNextWeek
+        print("LLLLLLLLLLLLOOOOOOOOOOOOOOOOOOOOOOOLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+        return str(datumNextWeek)
 
 def getDateText(userText):
     doc=nlp(userText)
@@ -223,9 +226,8 @@ def getDateText(userText):
                 userDatum=" ".join([userDatum,token.text])
         elif token.text in Wochentage:
                 userDatum=" ".join([userDatum,token.text])
-                if(len(userDatum)<10):
-                    userDatum=userDatum[1:]
-                return str(userDatum)
+                userDatum=userDatum[1:]
+                return userDatum
     
 
 
@@ -398,3 +400,4 @@ class Logik(object):
             return kalenderAnlegen(str(self.titel))
         elif self.intend == "loeschen" and self.art == "Kalender":
              return kalenderLoeschen(str(self.titel))
+print(getDatum("Montag"))

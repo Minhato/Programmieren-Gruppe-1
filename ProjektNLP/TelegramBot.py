@@ -77,7 +77,7 @@ def formatAndSendMessages(chat_id):
 def missingValueNachfrage(chat_id, missingValues):
     for element in missingValues:
         if(element=='titel'):
-            bot.send_message(chat_id,"Ich konnte aus deinem Satz leider keinen Titel erkennen\nBitte gebe einen Titel an wie z.B Skaten mit Minh")
+            bot.send_message(chat_id,'Ich konnte aus deinem Satz leider keinen Titel erkennen\nBitte gebe einen Titel mit "Titel ist" an wie "Titel ist Skaten mit Minh')
         elif(element=='uhrzeit'):
             bot.send_message(chat_id,"In deinem Satz ist keine Anfangsuhrzeit des Termines angegeben\nBitte gebe eine Startuhrzeit an wie z.B 15 Uhr")
         elif(element=='datum'):
@@ -121,23 +121,18 @@ def checkSpecificInput(userEingabe,chat_id):
         if pp.titel==None:
             print("Er geht in die Titel schleife rein")
             pp.titel=getTitel(userEingabe)
-            if(pp.titel==None):
-                bot.send_message(chat_id,"Kein Titel erkannt,bitte nochmals angeben")
     except:
-        print("Except wird aufgerufen")
-        bot.send_message(chat_id,"Titel fehlt immernoch")
+        pass
     try:
         if pp.intend==None:
             pp.intend=getIntend(userEingabe,checkActionKind())
     except:
-        bot.send_message(chat_id,"Kein Intend erkannt,bitte erneut angeben")
+        bot.send_message(chat_id,"Kein Intend erkannt, bitte erneut angeben")
     try:
         if pp.uhrzeit==None:
             pp.uhrzeit=getUhrzeit(0)
-            if(pp.uhrzeit==None):
-                bot.send_message(chat_id,"keine StartUhrzeit erkennt,bitte erneut angeben")
     except:
-        bot.send_message(chat_id,"keine StartUhrzeit erkennt,bitte erneut angeben")
+        pass
     try:
         if pp.enduhrzeit==None:
             print("enduhrzeit wird ausgeführt")

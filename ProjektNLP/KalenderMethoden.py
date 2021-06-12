@@ -117,7 +117,7 @@ def terminloeschen(jahr,monat,tag,startStunde,startMinute):
  # print(startZeit)
   for event in events['items']:
    # print(event['summary'])
-   # print(event['start']['dateTime'])
+    print(event['start']['dateTime'])
     if startZeit in  event['start']['dateTime']:
      eventID= event['id']
      print("ID gefunden")

@@ -278,38 +278,6 @@ def getUhrzeit(index):
         print("Keine Uhrzeiten gefunden")
         return None 
 
-# def kalenderEintrag(self):
-#     datumAlsDate = datetime.strptime( (self.datum,"%d" "." "%m" "." "%Y"))
-#     datetime.strftime
-#     jahr = datetime.strftime(datumAlsDate,"%Y")
-#     monat = datetime.strftime(datumAlsDate,"%m")
-#     tag = datetime.strftime(datumAlsDate,"%d")
-#     stunde = datetime.strftime(datumAlsDate,"%H")
-#     minute = datetime.strftime(datumAlsDate,"%M")
-#     endStunde = datetime.strftime(datumAlsDate,"%H")
-#     endMinute = datetime.strftime(datumAlsDate,"%M")
-#     titel = "TEST"
-
-#     if self.intend == "erstellen" and self.art == "Termin":
-#         print("Termin wird angelegt")
-#         terminAnlegen(jahr,monat,tag,stunde,minute,endStunde,endMinute,self.titel, "")
-#     elif self.intend == "bearbeiten" and self.art == "Termin":
-#         #alel bearbeitungsfälle
-#         terminBearbeiten(jahr,monat,tag,stunde,minute,titel)
-#     elif self.intend == "verschieben" and self.art == "Termin":
-#         #alel bearbeitungsfälle
-#         terminBearbeiten(jahr,monat,tag,stunde,minute,titel)    
-#     elif self.intend == "loeschen" and self.art == "Termin":
-#         terminloeschen(jahr,monat,tag,stunde,minute)
-#     elif self.intend == "anzeigen" and self.art == "Termin":
-#         terminanzeigen(jahr,monat,tag)
-#     elif self.intend == "erstellen" and self.art == "Kalender":
-#         kalenderAnlegen(titel)
-#     elif self.intend == "loeschen" and self.art == "Kalender":
-#         kalenderLoeschen(titel)
-
-
-
 class Logik(object):
     def __init__(self,):
      pass
@@ -330,7 +298,7 @@ class Logik(object):
             monat = int (datetime.strftime(datumAlsDate,"%m"))
             tag = int (datetime.strftime(datumAlsDate,"%d"))
         
-        elif self.intend == "erstellen": # usw TO:DO
+        elif self.intend == "erstellen" and self.art == "Termin": # usw TO:DO
             startUhrzeit= datetime.strptime(self.uhrzeit, "%H" ":" "%M")
             endUhrzeit= datetime.strptime(self.enduhrzeit, "%H" ":" "%M")
             #startUhrzeit= datetime.strptime(self.uhrzeit, ) 
@@ -368,7 +336,7 @@ class Logik(object):
             endStunde = neueStunde + 1 
             endMinute = neueMinute
 
-        if self.intend == "loeschen":
+        if self.intend == "loeschen" and self.art == "Termin":
             datumAlsDate = datetime.strptime(datum, "%d" "." "%m" "." "%Y")
             startUhrzeit= datetime.strptime(self.uhrzeit, "%H" ":" "%M")
             jahr = int (datetime.strftime(datumAlsDate,"%Y"))

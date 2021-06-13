@@ -136,8 +136,16 @@ def getDatum(erkannterTag):
     datumNlp =nlp(erkannterTag)
     #patterns
     patterns=[
-        [{"TEXT":"nächste"},{"TEXT":"Woche","OP":"?" },{"TEXT":{"REGEX":"\w*tag\b"}}],
-        [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?" },{"TEXT":"Mittwoch"}]
+        #Refex hat irgendwie nicht konstant funktioniert
+        #[{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?"},{"TEXT":{"REGEX":"\w*tag\b"}}],
+        [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?"},{"TEXT":"Montag"}],
+        [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?"},{"TEXT":"Dienstag"}],
+        [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?"},{"TEXT":"Mittwoch"}],
+        [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?"},{"TEXT":"Donnerstag"}],
+        [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?"},{"TEXT":"Freitag"}],
+        [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?"},{"TEXT":"Samstag"}],
+        [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?"},{"TEXT":"Sonntag"}],
+        
         
         
     ]
@@ -145,6 +153,7 @@ def getDatum(erkannterTag):
     matcher.add("Weekdays",patterns)
     testDoc= nlp(erkannterTag)
     matches= matcher(testDoc)
+    print(matches)
     
     possibleDate={
         "heute":str(heute.strftime('%d' '.' '%m' '.' '%Y') ),
@@ -172,7 +181,6 @@ def getDatum(erkannterTag):
         print("Pattern wird gematched")
         string_id=nlp.vocab.strings[match_id]            
         span=testDoc[start:end]
-        print(span.text)
         datumNextWeek=getDateNextWeek(span.text)
     #return der getDatum Methode
     #deutsches Datum->return des Formatieren Datums
@@ -184,11 +192,10 @@ def getDatum(erkannterTag):
             #Platz zum formatieren des Datums zum google api Standart
             return token.text
     if(matches==[]):
-        
         return datetime.strptime(str(possibleDate.get(erkannterTag)),'%Y' '-' '%m' '-' '%d').strftime('%d' '.' '%m' '.' '%Y')
     else:
-        print("LLLLLLLLLLLLOOOOOOOOOOOOOOOOOOOOOOOLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
-        return str(datumNextWeek)
+        
+        return datetime.strptime(str(datumNextWeek),'%Y' '-' '%m' '-' '%d').strftime('%d' '.' '%m' '.' '%Y')
 
 def getDateText(userText):
     doc=nlp(userText)
@@ -368,4 +375,5 @@ class Logik(object):
             return kalenderAnlegen(str(self.titel))
         elif self.intend == "loeschen" and self.art == "Kalender":
              return kalenderLoeschen(str(self.titel))
-print(getDatum("Montag"))
+print(getDatum("nächste Woche Sonntag"))
+print(calculateWithWeekdays(2))

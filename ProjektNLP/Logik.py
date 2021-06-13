@@ -64,11 +64,13 @@ def checkActionKind(usereingabe):
         elif(token.text=="Geburtstag"):
             return"Geburtstag"
 
-def getIntend(userInput,kindOfRequest):
+def getIntend(userEingabe,kindOfRequest):
+    intend=""
     matcher=Matcher(nlp.vocab)
-    userInput=userInput+"."
+    userEingabe=userEingabe+"."
+    print("User Input ist:"+userEingabe)
     #List of Intends für mögliche aktionen für den matcher.
-    listOfIntends=["anlegen","anzeigen","machen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","lege","ändere","lösche","erstelle","verschiebe","verlege","mache","zeige","bearbeite", "bearbeiten"]
+    listOfIntends=["anlegen","anzeigen","machen","löschen","ändern","verschieben","verlegen","eintragen","erstellen","lege","ändere","lösche","erstelle","verschiebe","verlege","mache","zeige","bearbeite", "bearbeiten","sehen"]
     #Pattern anlegen
     patterns=[
         [{"LOWER":"erstelle"},{"POS":"DET"},{"TEXT":kindOfRequest}],
@@ -82,13 +84,14 @@ def getIntend(userInput,kindOfRequest):
         [{"LOWER":"verlege"},{"POS":"DET"},{"TEXT":kindOfRequest}],
         [{"LOWER":"zeige"},{"POS":"PRON","OP":"?"},{"POS":"DET"},{"LEMMA":kindOfRequest}],
         [{"LEMMA":kindOfRequest},{"POS":"VERB"}],
-        [{"POS":"VERB"},{"IS_PUNCT":True}]
+        [{"POS":"VERB"},{"IS_PUNCT":True}],
+        #Sonderfäll für Zeige an
+        [{"LOWER":"zeige"},{"POS":"PRON","OP":"?"},{"POS":"DET"},{"LEMMA":kindOfRequest},{"POS":"ADP"},{"POS":"DET","OP":"?"},{"POS":"NUM","OP":"?"},{"POS":"ADJ","OP":"?"},{"POS":"NOUN"},{"TEXT":"an"}],
         
-    
-    ]
+     ]
     
     matcher.add("Intention",patterns)
-    testDoc= nlp(userInput)
+    testDoc= nlp(userEingabe)
     matches= matcher(testDoc)
 
     for match_id,start, end in matches:
@@ -96,6 +99,13 @@ def getIntend(userInput,kindOfRequest):
         string_id=nlp.vocab.strings[match_id]
         span=testDoc[start:end]
         intend=span.text.replace(kindOfRequest,"").replace(" ","").replace(".","")
+
+    #Bei keinen Matches(verursacht durch spezielle Satzstellung,wird erstes Wort als Intend gesetzt)
+    if matches==[]:
+        intend=userEingabe[0:10]
+        intend=intend[0].lower()+intend[1:]
+        print(intend)
+
     if(intend in listOfIntends or len(intend)>7):
             if "lege"in intend.lower() or "erstelle"in intend.lower() or"trage"in intend.lower() or "mache" in intend.lower():
                 return "erstellen"
@@ -105,7 +115,7 @@ def getIntend(userInput,kindOfRequest):
                 return "loeschen"
             elif "verschiebe"in intend.lower() or "verlege" in intend.lower():
                 return "verschiebe"
-            elif "zeige" in intend.lower():
+            elif "zeige" in intend.lower() or "sehen" in intend.lower():
                 return "zeige an"
             else:
                 return"kein pattern für Intend gefunden"
@@ -375,5 +385,5 @@ class Logik(object):
             return kalenderAnlegen(str(self.titel))
         elif self.intend == "loeschen" and self.art == "Kalender":
              return kalenderLoeschen(str(self.titel))
-print(getDatum("nächste Woche Sonntag"))
-print(calculateWithWeekdays(2))
+
+print(getIntend("Zeige mir einen Termin für 17 Uhr an","Termin"))

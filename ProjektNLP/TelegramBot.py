@@ -14,19 +14,72 @@ pp = Logik()
 labCoat = u'\U0001F97C' 
 robot= u'\U0001F916'
 
+
 bot = telebot.TeleBot(tokenAPI)
 #Commands
 @bot.message_handler(commands=['start'])
 def echo_message(message):
     chat_id = message.chat.id
-    bot.send_message(chat_id,"Der Botler ist ihr persönlicher Assistent und verwaltet Ihren Terminkalender\nmit'/help' erhalten Sie eine ausführliche beschreibung aller Funktionalitäten.\nMöge die Organisation deiner Zeit mit dir sein!")
-    bot.send_message(chat_id, "Ihr Botler wurde gestartet geben Sie einen Satz ein"+labCoat)
+    bot.send_message(chat_id,"Der Botler ist ihr persönlicher Assistent und verwaltet Ihren Terminkalender\nmit'/help' erhalten Sie eine genauere Beschreibung des Botlers.\nMit '/commands' erhalten Sie eine ausführliche Auflistung der möglichen Aktionen und der benötigten, sowie gültigen Eingaben\n\nMöge die Organisation deiner Zeit mit dir sein!")
+    bot.send_message(chat_id, "Ihr Botler wurde gestartet geben Sie einen Satz ein"+robot)
  
 @bot.message_handler(commands=['help'])
 def echo_message(message):
     chat_id= message.chat.id
     bot.send_message(chat_id,"Der Botler ist ihr persönlicher Assistent und hilft Ihnen dabei Ordnung in ihre Termine zu bringen"+robot+"\n\nMit dem Botler kannst du Google Calender Termine anlegen,anzeigen,löschen,ändern oder verschieben\n\n""Dazu kannst du einfach einen Satz schreiben, der Botler erledigt den Rest und Fragt zur Not nochmal nach.\n\n\nMit Informationen über Art des Termins,Datum,Uhrzeit und Titel des Termins bist du aber auf der sicheren Seite;)")
 
+@bot.message_handler(commands=['commands'])
+def echo_message(message):
+    chat_id=message.chat.id
+    bot.send_message(chat_id,"Hier siehst du eine vollständige Auflistung aller Möglichen Aktionen des Botlers"+labCoat+
+    
+    """\n\nWie auch im echten Leben sind die Fähigkeiten eines B(ot)uttlers begrenzt, aber er gibt sein bestes deine Wünsche zu erfüllen.\n
+    Sollte ihr Botler nicht mehr reagieren liegt ein seltener Fehler vor.
+    In diesem Fall bitten wir dich die Python Datei erneut zu starten.
+     Commands:
+
+    Termin anlegen:
+    benötigt Titel,Datum,Uhrzeit,intend
+    
+    Termin löschen:
+    benötigt Datum,Uhrzeit,intend
+
+    Termin bearbeiten:
+    benötigt Datum,Uhrzeit,neuer Titel,intend
+
+    Termin verschieben(verschiebt Termin um 2h zurück):
+    benötigt
+    Titel,Datum,Uhrzeit
+
+    *Mögliche Inputs*
+
+    Titel:
+    Alles nach Keyword Titel
+
+    Datum:
+    -Datum im dd.dd.dddd Format 
+    -Daten im d. oder d + Monat Format 
+    -Keywords heute,morgen,übermorgen 
+    -Wochentage 
+    -Lemma(nächst)+(OP:Woche)+Wochentag 
+    z.B(nächsten Dienstag/nächste Woche Dienstag) 
+
+    Uhrzeit:
+    -Uhrzeit in dd:dd
+    -Uhrzeit in dd + Uhr
+
+    Enduhrzeit:
+    Uhrzeit - Enduhrzeit
+    bis + Uhrzeit
+
+    Intend:
+    -Intend am Ende des Satzes 
+    -Imperativ + DET+ ActionKind 
+    -ActionKind+Intend 
+    -Intend + PRON +DET+Action Kind(für anzeigen)
+    -Intend als Imperativ am Anfang des Satzes
+
+     """)
 #Methoden
 def checkAllInputs(userEingabe):
     setText(userEingabe)
@@ -77,11 +130,20 @@ def formatAndSendMessages(chat_id):
 def missingValueNachfrage(chat_id, missingValues):
     for element in missingValues:
         if(element=='titel'):
-            bot.send_message(chat_id,'Ich konnte aus deinem Satz leider keinen Titel erkennen\nBitte gebe einen Titel mit "Titel ist" an wie "Titel ist Skaten mit Minh')
+            if(pp.intend=="bearbeiten"):
+                bot.send_message(chat_id,"Wie soll der neue Titel lauten?")
+            else:
+                bot.send_message(chat_id,'Ich konnte aus deinem Satz leider keinen Titel erkennen\nBitte gebe einen Titel mit "Titel ist" an wie "Titel ist Skaten mit Minh')
         elif(element=='uhrzeit'):
-            bot.send_message(chat_id,"In deinem Satz ist keine Anfangsuhrzeit des Termines angegeben\nBitte gebe eine Startuhrzeit an wie z.B 15 Uhr")
+            if(pp.intend=="bearbeiten"):
+                bot.send_message(chat_id,"Um wieviel Uhr findet der Termin statt den du bearbeiten willst?")
+            else:    
+                bot.send_message(chat_id,"In deinem Satz ist keine Anfangsuhrzeit des Termines angegeben\nBitte gebe eine Startuhrzeit an wie z.B 15 Uhr")
         elif(element=='datum'):
-            bot.send_message(chat_id,"In deinem Satz ist kein Datum genannt\n Bitte gebe ein Datum an wie z.B 3. Juni/01.01.2021 oder nächsten Mittwoch")
+            if(pp.intend=="bearbeiten"):
+                bot.send_message(chat_id,"An welchem Datum ist der Termin den du bearbeiten willst?")
+            else:
+                bot.send_message(chat_id,"In deinem Satz ist kein Datum genannt\n Bitte gebe ein Datum an wie z.B 3. Juni/01.01.2021 oder nächsten Mittwoch")
 
 
 
@@ -142,10 +204,9 @@ def checkSpecificInput(userEingabe,chat_id):
     try:
         if pp.datum==None:
             pp.datum=getDatum(getDateText(userEingabe))
-            if(pp.datum==None):
-                bot.send_message(chat_id,"Kein Datum gefunden bitte das Datum im dd.dd.dddd Format eingeben")
+        
     except:
-        bot.send_message(chat_id,"Kein Datum gefunden bitte das Datum im dd.dd.dddd Format eingeben")
+        pass
 
 @bot.message_handler(content_types=['audio'])
 def voice_handler(self):

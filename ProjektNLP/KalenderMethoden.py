@@ -60,22 +60,24 @@ def terminAnlegen(jahr, monat, tag, startStunde, startMinute, endStunde, endMinu
 
 def terminanzeigen(jahr, monat, tag,):
   """Zum anzeigen aller Termine an dem jeweiligen Tag (Minh) """
-  try:
-    events = gac.service.events().list(calendarId= gac.getId('TestKalender')).execute()
-    datum = str(datetime.date(jahr,monat,tag))
-    listeDerEvents = []
-    listeAlsString = ""
-    for event in events['items']:
-      if datum in event.get('start')['dateTime']:
-        print( event.get('summary')+ " am " + event.get('start')['dateTime'])
-        variable = event.get('start')['dateTime']
-        listeDerEvents.append( event.get('summary')+ " am " + str(datetime.datetime.strptime(variable,("%Y-%m-%d" "T" "%H:%M:%S" "%z")).strftime("%d.%m.%Y" " um " "%H:%M" "Uhr")))
-        variable = datetime.datetime.strptime(variable,("%Y-%m-%d" "T" "%H:%M:%S" "%z")).strftime("%d.%m.%Y" "um" "%H:%M" "Uhr") #2021-06-15T03:00:00+02:00
-    for werte in listeDerEvents:
-      listeAlsString += str(werte) + "\n"
-    return listeAlsString
-  except:
-    return "es wurden keine Termine für den Tag gefunden"
+  events = gac.service.events().list(calendarId= gac.getId('TestKalender')).execute()
+  datum = str(datetime.date(jahr,monat,tag))
+  listeDerEvents = []
+  listeAlsString = ""
+  for event in events['items']:
+    if datum in event.get('start')['dateTime']:
+      print( event.get('summary')+ " am " + event.get('start')['dateTime'])
+      variable = event.get('start')['dateTime']
+      listeDerEvents.append( event.get('summary')+ " am " + str(datetime.datetime.strptime(variable,("%Y-%m-%d" "T" "%H:%M:%S" "%z")).strftime("%d.%m.%Y" " um " "%H:%M" "Uhr")))
+      variable = datetime.datetime.strptime(variable,("%Y-%m-%d" "T" "%H:%M:%S" "%z")).strftime("%d.%m.%Y" "um" "%H:%M" "Uhr") #2021-06-15T03:00:00+02:00
+  for werte in listeDerEvents:
+    listeAlsString += str(werte) + "\n"
+  print("die liste")
+  print(listeAlsString)
+  if listeAlsString == "":
+    return "es wurden keine Termine für den Tag gefunden! Glück gehabt"
+
+  return listeAlsString
 
 def terminTitelBearbeiten(jahr,monat,tag,stunde,minute,titel):
   """Zum Termin Bearbeiten  """

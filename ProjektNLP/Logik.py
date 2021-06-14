@@ -56,9 +56,9 @@ def checkActionKind(usereingabe):
     #         if(token.text=="Geburtstag"):
     #             return"Geburtstag"
     for token in noStopwordDoc:
-        if(token.text=="Kalender"):
+        if(token.text=="Kalender"or token.text("kalender")):
             return "Kalender"
-        elif(token.lemma_=="Termin"or token.lemma_ == "Meeting"or token.lemma_ =="Treffen"):
+        elif(token.lemma_=="Termin"or token.lemma_ == "Meeting"or token.lemma_ =="Treffen"or token.text("termin")):
             print("Der TOKEN HIER IST" + token.text)
             return "Termin"
         elif(token.text=="Geburtstag"):

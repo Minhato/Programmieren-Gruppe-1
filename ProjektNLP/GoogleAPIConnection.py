@@ -1,6 +1,6 @@
 #Google API Connection
 import datetime
-from pprint import pprint
+#from pprint import pprint
 import sys
 from oauth2client import client
 from googleapiclient import sample_tools
@@ -9,7 +9,6 @@ from googleapiclient import sample_tools
 service, flags = sample_tools.init(sys.argv,'calendar', 'v3', __doc__, __file__, scope=['https://www.googleapis.com/auth/calendar'])
 def googleConnection():
     """Zum Abfragen des Token und zurückgeben der Kalenderliste (Minh) """
-
     page_token = None
     while True:
         calendar_list = service.calendarList().list(pageToken=page_token).execute()

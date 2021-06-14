@@ -1,16 +1,13 @@
 import datetime
-from pprint import pprint
-import sys
-from numpy import append
-from oauth2client import client
-from googleapiclient import sample_tools
-from pyasn1.type.constraint import ValueRangeConstraint
+#from pprint import pprint
+#import sys
+#from numpy import append
+#from oauth2client import client
+#from googleapiclient import sample_tools
 import GoogleAPIConnection as gac
-#from TelegramBot import bot, chat_id
-
+gac.googleConnection()
 def kalenderAnlegen(kalenderName):
   """Zum erstellen eines neuen Kalender (Minh)"""
-  gac.googleConnection()
   calendar = {
     'summary': kalenderName,
     'timeZone': 'Europe/Berlin' 
@@ -63,19 +60,22 @@ def terminAnlegen(jahr, monat, tag, startStunde, startMinute, endStunde, endMinu
 
 def terminanzeigen(jahr, monat, tag,):
   """Zum anzeigen aller Termine an dem jeweiligen Tag (Minh) """
-  events = gac.service.events().list(calendarId= gac.getId('TestKalender')).execute()
-  datum = str(datetime.date(jahr,monat,tag))
-  listeDerEvents = []
-  listeAlsString = ""
-  for event in events['items']:
-    if datum in event.get('start')['dateTime']:
-      print( event.get('summary')+ " am " + event.get('start')['dateTime'])
-      variable = event.get('start')['dateTime']
-      listeDerEvents.append( event.get('summary')+ " am " + str(datetime.datetime.strptime(variable,("%Y-%m-%d" "T" "%H:%M:%S" "%z")).strftime("%d.%m.%Y" " um " "%H:%M" "Uhr")))
-      variable = datetime.datetime.strptime(variable,("%Y-%m-%d" "T" "%H:%M:%S" "%z")).strftime("%d.%m.%Y" "um" "%H:%M" "Uhr") #2021-06-15T03:00:00+02:00
-  for werte in listeDerEvents:
-    listeAlsString += str(werte) + "\n"
-  return listeAlsString
+  try:
+    events = gac.service.events().list(calendarId= gac.getId('TestKalender')).execute()
+    datum = str(datetime.date(jahr,monat,tag))
+    listeDerEvents = []
+    listeAlsString = ""
+    for event in events['items']:
+      if datum in event.get('start')['dateTime']:
+        print( event.get('summary')+ " am " + event.get('start')['dateTime'])
+        variable = event.get('start')['dateTime']
+        listeDerEvents.append( event.get('summary')+ " am " + str(datetime.datetime.strptime(variable,("%Y-%m-%d" "T" "%H:%M:%S" "%z")).strftime("%d.%m.%Y" " um " "%H:%M" "Uhr")))
+        variable = datetime.datetime.strptime(variable,("%Y-%m-%d" "T" "%H:%M:%S" "%z")).strftime("%d.%m.%Y" "um" "%H:%M" "Uhr") #2021-06-15T03:00:00+02:00
+    for werte in listeDerEvents:
+      listeAlsString += str(werte) + "\n"
+    return listeAlsString
+  except:
+    return "es wurden keine Termine für den Tag gefunden"
 
 def terminTitelBearbeiten(jahr,monat,tag,stunde,minute,titel):
   """Zum Termin Bearbeiten  """
@@ -101,7 +101,7 @@ def terminVerschiebenNeueUhrzeit(jahr,monat,tag,stunde,minute,neueStunde,neueMin
 
 #terminBearbeiten(2021,6,2,22,0,21,0,21,30)
 
-def terminBearbeiten(jahr,monat,tag,stunde,minute,neuJahr,neuMonat,neuTag,neueStunde,neueMinute,endStunde,endMinute):
+def terminVerschieben(jahr,monat,tag,stunde,minute,neuJahr,neuMonat,neuTag,neueStunde,neueMinute,endStunde,endMinute):
   """Zum Termin Bearbeiten nur mit neuen Datum """
   event = gac.service.events().get(calendarId=gac.getId('TestKalender'), eventId=gac.getEventId(jahr,monat,tag,stunde,minute)).execute()
   event['start'] ['dateTime'] = datetime.datetime(neuJahr,neuMonat,neuTag,neueStunde,neueMinute).astimezone().replace(microsecond=0).isoformat()

@@ -166,9 +166,9 @@ def getDatum(erkannterTag):
     print(matches)
     
     possibleDate={
-        "heute":str(heute.strftime('%d' '.' '%m' '.' '%Y') ),
-        "morgen":str((heute+timedelta(days=1)).strftime('%d' '.' '%m' '.' '%Y') ),
-        "übermorgen":str((heute+timedelta(days=2)).strftime('%d' '.' '%m' '.' '%Y') ),
+        "heute":heute,
+        "morgen":heute+timedelta(days=1),
+        "übermorgen":heute+timedelta(days=2),
         "Montag":calculateWithWeekdays(0),
         "Dienstag":calculateWithWeekdays(1),
         "Mittwoch":calculateWithWeekdays(2),
@@ -385,4 +385,4 @@ class Logik(object):
         elif self.intend == "loeschen" and self.art == "Kalender":
              return kalenderLoeschen(str(self.titel))
 
-print(getIntend("Zeige mir einen Termin für 17 Uhr an","Termin"))
+print(getDatum(getDateText("Lege einen Termin für heute an")))

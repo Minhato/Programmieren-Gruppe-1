@@ -19,6 +19,7 @@ bot = telebot.TeleBot(tokenAPI)
 #Commands
 @bot.message_handler(commands=['start'])
 def echo_message(message):
+    reset()
     chat_id = message.chat.id
     bot.send_message(chat_id,"Der Botler ist ihr persönlicher Assistent und verwaltet Ihren Terminkalender\nmit'/help' erhalten Sie eine genauere Beschreibung des Botlers.\nMit '/commands' erhalten Sie eine ausführliche Auflistung der möglichen Aktionen und der benötigten, sowie gültigen Eingaben\n\nMöge die Organisation deiner Zeit mit dir sein!")
     bot.send_message(chat_id, "Ihr Botler wurde gestartet geben Sie einen Satz ein"+robot)
@@ -110,6 +111,16 @@ def checkAllInputs(userEingabe):
         pp.datum=getDatum(getDateText(userEingabe))
     except: 
         pp.datum=None
+def reset():
+    global ersteUserNachricht
+    ersteUserNachricht=True
+    pp.titel=None
+    pp.inetnd=None
+    pp.art=None
+    pp.uhrzeit=None
+    pp.enduhrzeit=None
+    pp.datum=None
+
 
 def formatAndSendMessages(chat_id):
     """Sendet erkannte elemente an Nutzer wenn Vollständig"""
@@ -133,7 +144,10 @@ def missingValueNachfrage(chat_id, missingValues):
             if(pp.intend=="bearbeiten"):
                 bot.send_message(chat_id,"Wie soll der neue Titel lauten?")
             else:
-                bot.send_message(chat_id,'Ich konnte aus deinem Satz leider keinen Titel erkennen\nBitte gebe einen Titel mit "Titel ist" an wie "Titel ist Skaten mit Minh')
+                if(pp.art=="Termin"):
+                    bot.send_message(chat_id,'Ich konnte aus deinem Satz leider keinen Titel erkennen\nBitte gebe einen Titel mit "Titel ist" an wie "Titel ist Skaten mit Minh')
+                else:
+                    bot.send_message(chat_id,'Ich konnte keinen Titel für deinen neuen Kalender erkennen\nBitte gebe den Kalendernamen mit "Titel ist" an wie "Titel ist Ferienkalender')
         elif(element=='uhrzeit'):
             if(pp.intend=="bearbeiten"):
                 bot.send_message(chat_id,"Um wieviel Uhr findet der Termin statt den du bearbeiten willst?")
@@ -232,15 +246,11 @@ def echo_message(message):
         #Wenn keine missing Inputs gefunden wird message gesendet und Action ausgeführt
         if(checkDicForMissingValue(pp.__dict__,pp.intend)==[]):
             formatAndSendMessages(chat_id)
-            print(ersteUserNachricht)
             bot.send_message(chat_id, pp.testest())
             ersteUserNachricht=True
             return
     if pp.intend not in intendListe:
         intendCheck(chat_id,pp.__dict__)
-        print(pp.__dict__)
-        print(eingabe)
-        print(pp.intend)
         pp.intend = eingabe
         print(pp.__dict__)
         ersteUserNachricht = False

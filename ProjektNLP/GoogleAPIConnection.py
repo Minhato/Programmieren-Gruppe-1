@@ -5,7 +5,10 @@ import sys
 from oauth2client import client
 from googleapiclient import sample_tools
 
-
+# die Variable service und googleConnection wurde aus der Example Python aus der offiziellen Google API kopiert, da bei unser service es zu technischen Komplikationen kam
+# die Token haben sich bei uns nicht erneuert und waren statisch. D.h nur ein vorher gespeicherter Token konnte genutzt werden
+# Da wir auf keine Lösung kamen, entschieden wir uns hier ein bisschen den Code abzuschauen
+# Alles andere während des Projektes ist zu 100% von uns selber.
 service, flags = sample_tools.init(sys.argv,'calendar', 'v3', __doc__, __file__, scope=['https://www.googleapis.com/auth/calendar'])
 def googleConnection():
     """Zum Abfragen des Token und zurückgeben der Kalenderliste (Minh) """

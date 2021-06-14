@@ -317,18 +317,15 @@ class Logik(object):
             monat = int (datetime.strftime(datumAlsDate,"%m"))
             tag = int (datetime.strftime(datumAlsDate,"%d"))
         
-        elif self.intend == "erstellen" and self.art == "Termin": # usw TO:DO
+        elif self.intend == "erstellen" and self.art == "Termin": 
             startUhrzeit= datetime.strptime(self.uhrzeit, "%H" ":" "%M")
             endUhrzeit= datetime.strptime(self.enduhrzeit, "%H" ":" "%M")
-            #startUhrzeit= datetime.strptime(self.uhrzeit, ) 
-            print("Datum ist: " + str(datum))
             datumAlsDate = datetime.strptime(datum, "%d" "." "%m" "." "%Y")
             jahr = int (datetime.strftime(datumAlsDate,"%Y"))
             monat = int (datetime.strftime(datumAlsDate,"%m"))
             tag = int (datetime.strftime(datumAlsDate,"%d"))
             stunde = int (datetime.strftime(startUhrzeit,"%H"))
             minute = int (datetime.strftime(startUhrzeit,"%M"))
-            #neueStunde, neueMinute = 5 #TO:DO
             endStunde = int (datetime.strftime(endUhrzeit,"%H"))
             endMinute = int (datetime.strftime(endUhrzeit,"%M")) 
 

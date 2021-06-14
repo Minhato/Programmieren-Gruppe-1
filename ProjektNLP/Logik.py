@@ -1,4 +1,4 @@
-from KalenderMethoden import kalenderAnlegen, kalenderLoeschen, kalenderAnlegen, terminAnlegen, terminBearbeiten, terminTitelBearbeiten, terminVerschiebenNeueUhrzeit, terminanzeigen, terminloeschen
+from KalenderMethoden import kalenderAnlegen, kalenderLoeschen, kalenderAnlegen, terminAnlegen, terminTitelBearbeiten, terminVerschiebenNeueUhrzeit, terminanzeigen, terminloeschen
 import spacy
 from spacy.matcher import Matcher
 from spacy.matcher import PhraseMatcher
@@ -56,9 +56,9 @@ def checkActionKind(usereingabe):
     #         if(token.text=="Geburtstag"):
     #             return"Geburtstag"
     for token in noStopwordDoc:
-        if(token.text=="Kalender"or token.text("kalender")):
+        if(token.text=="Kalender"):
             return "Kalender"
-        elif(token.lemma_=="Termin"or token.lemma_ == "Meeting"or token.lemma_ =="Treffen"or token.text("termin")):
+        elif(token.lemma_=="Termin"or token.lemma_ == "Meeting"or token.lemma_ =="Treffen"):
             print("Der TOKEN HIER IST" + token.text)
             return "Termin"
         elif(token.text=="Geburtstag"):
@@ -363,7 +363,6 @@ class Logik(object):
             tag = int (datetime.strftime(datumAlsDate,"%d"))
             stunde = int (datetime.strftime(startUhrzeit,"%H"))
             minute = int (datetime.strftime(startUhrzeit,"%M"))
-            print("Daten in testetst Fehlerhaft")
 
         if self.intend == "erstellen" and self.art == "Termin":
             print("Termin wird angelegt")

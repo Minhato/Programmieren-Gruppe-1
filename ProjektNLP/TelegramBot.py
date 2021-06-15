@@ -146,19 +146,19 @@ def missingValueNachfrage(chat_id, missingValues):
                 bot.send_message(chat_id,"Wie soll der neue Titel lauten?")
             else:
                 if(pp.art=="Termin"):
-                    bot.send_message(chat_id,'Ich konnte aus deinem Satz leider keinen Titel erkennen\nBitte gebe einen Titel mit "Titel ist" an wie "Titel ist Skaten mit Minh')
+                    bot.send_message(chat_id,'Ich konnte aus deinem Satz leider keinen Titel erkennen\nBitte gebe einen Titel mit "Titel ist" an wie Titel ist Skaten mit Minh.\n\nDeine Restlichen Inputs wurden gespeichert')
                 else:
                     bot.send_message(chat_id,'Ich konnte keinen Titel für deinen neuen Kalender erkennen\nBitte gebe den Kalendernamen mit "Titel ist" an wie "Titel ist Ferienkalender')
         elif(element=='uhrzeit'):
             if(pp.intend=="bearbeiten"):
                 bot.send_message(chat_id,"Um wieviel Uhr findet der Termin statt den du bearbeiten willst?")
             else:    
-                bot.send_message(chat_id,"In deinem Satz ist keine Anfangsuhrzeit des Termines angegeben\nBitte gebe eine Startuhrzeit an wie z.B 15 Uhr")
+                bot.send_message(chat_id,"In deinem Satz ist keine Anfangsuhrzeit des Termines angegeben\nBitte gebe eine Startuhrzeit an wie z.B 15 Uhr.\n\nDeine Restlichen Inputs wurden gespeichert")
         elif(element=='datum'):
             if(pp.intend=="bearbeiten"):
                 bot.send_message(chat_id,"An welchem Datum ist der Termin den du bearbeiten willst?")
             else:
-                bot.send_message(chat_id,"In deinem Satz ist kein Datum genannt\n Bitte gebe ein Datum an wie z.B 3. Juni/01.01.2021 oder nächsten Mittwoch")
+                bot.send_message(chat_id,"In deinem Satz ist kein Datum genannt\n Bitte gebe ein Datum an wie z.B 3. Juni/01.01.2021 oder nächsten Mittwoch.\n\nDeine Restlichen Inputs wurden gespeichert")
 
 
 

@@ -177,7 +177,6 @@ def intendCheck(chat_id,ppDict):
 def checkDicForMissingValue(ppDict,intend):
     """Prüft ob für eine gewollte Aktion alle Werte Vorhanden sind"""
     try:
-        print(intend)
         if pp.art=="Termin":
             googleMethodenTermin={'erstellen':['titel','intend','uhrzeit','enduhrzeit','datum'],
             'zeige an':['datum'],'bearbeiten':['titel','intend','uhrzeit','enduhrzeit','datum'],
@@ -188,9 +187,7 @@ def checkDicForMissingValue(ppDict,intend):
             necessaryInput=googleMethodenKalender[intend]
 
         missingElement=[]
-        print(type(missingElement))
         for element in necessaryInput:
-            print(element+" for schleife Funkitioniert") 
             if(ppDict[element]==None):
                 missingElement.append(element)
         return missingElement
@@ -198,10 +195,9 @@ def checkDicForMissingValue(ppDict,intend):
         print("etwas ist schiefgelaufen")
 
 def checkSpecificInput(userEingabe,chat_id):
-    """Versucht bisher fehlender Werte zu setzten"""
+    """Versucht bisher fehlender Werte zu setzen"""
     try:
         if pp.titel==None:
-            print("Er geht in die Titel schleife rein")
             pp.titel=getTitel(userEingabe)
     except:
         pass
@@ -217,7 +213,6 @@ def checkSpecificInput(userEingabe,chat_id):
         pass
     try:
         if pp.enduhrzeit==None:
-            print("enduhrzeit wird ausgeführt")
             pp.enduhrzeit=getUhrzeit(1)
     except:
         pass
@@ -227,10 +222,12 @@ def checkSpecificInput(userEingabe,chat_id):
         
     except:
         pass
-
+#Message handler für Sprachnachricht
 @bot.message_handler(content_types=['audio'])
 def voice_handler(self):
-    dateiVoice = bot._get_f
+    #UNFINSIHED, hier würde die Sprachnachricht abgefangen und heruntergeladen werden
+    #danach dann über Speechrecognition oder Google Speech to Text in ein Text verwandelt werden.
+    dateiVoice = bot._get_file
 
 
 
@@ -242,7 +239,6 @@ def echo_message(message):
     eingabe = message.text
     setText(eingabe)
     global ersteUserNachricht
-    print(ersteUserNachricht)
     intendListe={'erstellen','bearbeiten','loeschen','verschiebe','zeige an'}
     #If Abrage wird aufgeführt wenn erste user Nachricht==True->checkt alle Inputs
     if (ersteUserNachricht==True):

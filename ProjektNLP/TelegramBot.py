@@ -22,12 +22,13 @@ def echo_message(message):
     chat_id = message.chat.id
     bot.send_message(chat_id,"Der Botler ist ihr persönlicher Assistent und verwaltet Ihren Terminkalender\nmit'/help' erhalten Sie eine genauere Beschreibung des Botlers.\nMit '/commands' erhalten Sie eine ausführliche Auflistung der möglichen Aktionen und der benötigten, sowie gültigen Eingaben\n\nMöge die Organisation deiner Zeit mit dir sein!")
     bot.send_message(chat_id, "Ihr Botler wurde gestartet geben Sie einen Satz ein"+robot)
+    bot.send_photo(chat_id, photo= open('Botler_farbig_start.jpg', 'rb'))
  
 @bot.message_handler(commands=['help'])
 def echo_message(message):
     chat_id= message.chat.id
     bot.send_message(chat_id,"Der Botler ist ihr persönlicher Assistent und hilft Ihnen dabei Ordnung in ihre Termine zu bringen"+robot+"\n\nMit dem Botler kannst du Google Calender Termine anlegen,anzeigen,löschen,ändern oder verschieben\n\n""Dazu kannst du einfach einen Satz schreiben, der Botler erledigt den Rest und Fragt zur Not nochmal nach.\n\n\nMit Informationen über Art des Termins,Datum,Uhrzeit und Titel des Termins bist du aber auf der sicheren Seite;)")
-
+    bot.send_photo(chat_id, photo= open('Botler_farbig_help.jpg', 'rb'))
 @bot.message_handler(commands=['commands'])
 def echo_message(message):
     chat_id=message.chat.id

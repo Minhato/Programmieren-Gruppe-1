@@ -222,13 +222,31 @@ def getDateText(userText):
     }
     userDatum =""
     for token in doc:
-        if token.shape_=="dd."or token.shape_=="d."or token.shape_=="d" and token.head.text in MonateValue:
+        if token.shape_=="dd."or token.shape_=="d."or token.shape_=="d" or token.shape_=="dd"  and token.head.text in MonateValue:
+            
             tag=token.text
         if token.text=='heute' or token.text=='morgen' or token.text=='übermorgen':
             return token.text
         if token.shape_=="d.":
             tag="0"+tag
             monat=MonateValue[token.head.text]                
+            jahr=datetime.now().year
+            userDatum=tag+monat+"."+str(jahr)
+            return str(userDatum)
+        elif token.shape_=="dd.":
+            monat=MonateValue[token.head.text]
+            jahr=datetime.now().year
+            userDatum=tag+monat+"."+str(jahr)
+            return str(userDatum)
+        elif token.shape_=="d":
+            tag="0"+tag+"."
+            monat=MonateValue[token.head.text]
+            jahr=datetime.now().year
+            userDatum=tag+monat+"."+str(jahr)
+            return userDatum
+        elif token.shape_=="dd":
+            tag=tag+"."
+            monat=MonateValue[token.head.text]
             jahr=datetime.now().year
             userDatum=tag+monat+"."+str(jahr)
             return str(userDatum)
@@ -378,4 +396,4 @@ class Logik(object):
         elif self.intend == "loeschen" and self.art == "Kalender":
              return kalenderLoeschen(str(self.titel))
 
-print(getDatum(getDateText("Lege einen Termin für heute an")))
+print(getDateText("Lege einen Termin für den 6 Juni an"))

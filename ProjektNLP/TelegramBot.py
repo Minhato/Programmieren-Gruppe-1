@@ -1,4 +1,5 @@
 #from NLP_Calendar.Logik import Logik
+from GoogleAPIConnection import googleConnection
 from typing import no_type_check
 import telebot
 import spacy
@@ -13,7 +14,8 @@ pp = Logik()
 #Emojii register
 labCoat = u'\U0001F97C' 
 robot= u'\U0001F916'
-
+#für den Token zur API, wenn dieses noch nicht existiert
+googleConnection()
 
 bot = telebot.TeleBot(tokenAPI)
 #Commands

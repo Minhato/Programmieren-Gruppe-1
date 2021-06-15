@@ -84,6 +84,7 @@ def echo_message(message):
      """)
 #Methoden
 def checkAllInputs(userEingabe):
+    """Versucht alle Inputs zu setzten für erste Nachricht eines Users,wenn input nicht gesetzt werden kann->None"""
     setText(userEingabe)
     try:
         pp.titel = getTitel(userEingabe)
@@ -95,8 +96,6 @@ def checkAllInputs(userEingabe):
         pp.intend=None
     try:
         pp.art = checkActionKind(userEingabe)
-        print("die ART:")
-        print(pp.art)
     except:
         pp.art = None
     try:
@@ -108,11 +107,11 @@ def checkAllInputs(userEingabe):
     except:
         pp.enduhrzeit=None
     try:
-        #pp.datum=getDateText(eingabe)
         pp.datum=getDatum(getDateText(userEingabe))
     except: 
         pp.datum=None
 def reset():
+    """Resetet alle Variablen"""
     global ersteUserNachricht
     ersteUserNachricht=True
     pp.titel=None
@@ -124,7 +123,7 @@ def reset():
 
 
 def formatAndSendMessages(chat_id):
-    """Sendet erkannte elemente an Nutzer wenn Vollständig"""
+    """Sendet erkannte elemente an Nutzer wenn vollständig"""
     #Nachrichten Formatieren
     chatTitel = "Titel lautet: " + str(pp.titel)
     chatUhrzeit = "Anfangsuhrzeit ist: " + str(pp.uhrzeit) + " Uhr"
@@ -140,6 +139,7 @@ def formatAndSendMessages(chat_id):
 
     
 def missingValueNachfrage(chat_id, missingValues):
+    """Fragt bei fehlendem Input für eine Bestimmte Aktion den Nutzer nach dem fehlenden Input"""
     for element in missingValues:
         if(element=='titel'):
             if(pp.intend=="bearbeiten"):
@@ -163,6 +163,7 @@ def missingValueNachfrage(chat_id, missingValues):
 
 
 def intendCheck(chat_id,ppDict):
+    """Checkt ob ein Intend vorhanden ist,Falls nein,Eingabe über markup"""
     if(ppDict['intend']==None):
         markup = types.ReplyKeyboardMarkup(row_width=2)
         itembtn1 = types.KeyboardButton('zeige an')
@@ -174,6 +175,7 @@ def intendCheck(chat_id,ppDict):
         bot.send_message(chat_id, "Wähle einen Intent aus:", reply_markup=markup)
 
 def checkDicForMissingValue(ppDict,intend):
+    """Prüft ob für eine gewollte Aktion alle Werte Vorhanden sind"""
     try:
         print(intend)
         if pp.art=="Termin":
@@ -196,6 +198,7 @@ def checkDicForMissingValue(ppDict,intend):
         print("etwas ist schiefgelaufen")
 
 def checkSpecificInput(userEingabe,chat_id):
+    """Versucht bisher fehlender Werte zu setzten"""
     try:
         if pp.titel==None:
             print("Er geht in die Titel schleife rein")
@@ -246,21 +249,23 @@ def echo_message(message):
         #setzt alle Inputs->falls Leer ==None
         checkAllInputs(eingabe)
         print(pp.__dict__)
-        #Wenn keine missing Inputs gefunden wird message gesendet und Action ausgeführt
+        #Wenn keine missing Inputs gefunden, wird message gesendet und Action ausgeführt
         if(checkDicForMissingValue(pp.__dict__,pp.intend)==[]):
             formatAndSendMessages(chat_id)
             bot.send_message(chat_id, pp.testest())
             ersteUserNachricht=True
             return
+        #Wenn Intend keine unterstützte Aktion ist,muss User neuen Intend wählen
     if pp.intend not in intendListe:
         intendCheck(chat_id,pp.__dict__)
         pp.intend = eingabe
         print(pp.__dict__)
         ersteUserNachricht = False
+        #
     if pp.intend in intendListe:
         ersteUserNachricht =False
+    #Überprüft so lange weitere User Nachrichten auf fehlende Werte bis alles gestzt wurde
         if ersteUserNachricht == False:
-            print("2.Else Schelife wurde erreicht")
             checkSpecificInput(eingabe,chat_id)
             print(pp.__dict__)
             if(checkDicForMissingValue(pp.__dict__,pp.intend)==[]):

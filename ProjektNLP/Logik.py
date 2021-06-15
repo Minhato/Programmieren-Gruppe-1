@@ -12,7 +12,6 @@ nlp=spacy.load("de_core_news_sm")
 matcher=Matcher(nlp.vocab)
 
 text="Erstelle einen Termin"
-#text = ""
 #Doc ist text als Spacy Doc Objekt
 doc =  nlp(text)
 bereinigt=" ".join([token.text for token in doc if not token.is_stop and not token.is_punct])
@@ -36,12 +35,13 @@ def setText(eingabe):
 
 
 def getTokenList():
-    #Liste mit Tokens zum checken
+    #Liste mit Tokens zum checken(WIRD NICHT VERWENDET)
     for token in noStopwordDoc:
         if(token.is_stop == False or token.pos_=="NOUN"):
             tokenListe.append(token.lemma_)
     
 def checkActionKind(usereingabe):
+    """Überpüft ob Nutzer Aktion für einen Kalender oder Termin anlegen will"""
     print("nostopword")
     print(noStopwordDoc)
     setText(usereingabe)
@@ -65,6 +65,7 @@ def checkActionKind(usereingabe):
             return"Geburtstag"
 
 def getIntend(userEingabe,kindOfRequest):
+    """checkt die Nutzereingabe auf einen Intend und gibt diesen zurück"""
     intend=""
     matcher=Matcher(nlp.vocab)
     userEingabe=userEingabe+"."
@@ -103,6 +104,7 @@ def getIntend(userEingabe,kindOfRequest):
         intend=userEingabe[0:10]
         intend=intend[0].lower()+intend[1:]
         print(intend)
+        #Einheitliche returns wenn intend in listOfIntends ist
     if(intend in listOfIntends or len(intend)>7):
             if "lege"in intend.lower() or "erstelle"in intend.lower() or"trage"in intend.lower() or "mache" in intend.lower():
                 return "erstellen"
@@ -134,16 +136,16 @@ def calculateWithWeekdays(requestedWeekday):
     return calculatedDate
 
 def getDatum(erkannterTag):
+    """Liefert für einen Datumtext das entsprechende Datum im richtigen Format"""
     print("Parameter für erkannter Tag ist:"+erkannterTag)
     #heutigesDatum
     heute=date.today()
-    #globale Variable datumNextWeek in die Ergebis der Methode getDateNextWeek gespeichert wird,die in der for schleife der erkannten patterns aufgerufen wird
+    #globale Variable datumNextWeek in die Ergebis der Methode getDateNextWeek gespeichert wird
     datumNextWeek=date.today()
-    #aus Parameter wird NLP objekt erstellt
     datumNlp =nlp(erkannterTag)
     #patterns
     patterns=[
-        #Refex hat irgendwie nicht konstant funktioniert
+        #Regex hat irgendwie nicht konstant funktioniert
         #[{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?"},{"TEXT":{"REGEX":"\w*tag\b"}}],
         [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?"},{"TEXT":"Montag"}],
         [{"LEMMA":"nächst"},{"TEXT":"Woche","OP":"?"},{"TEXT":"Dienstag"}],
@@ -204,6 +206,7 @@ def getDatum(erkannterTag):
         return datetime.strptime(str(datumNextWeek),'%Y' '-' '%m' '-' '%d').strftime('%d' '.' '%m' '.' '%Y')
 
 def getDateText(userText):
+    """Erkennt aus der Nutzereingabe den Satzteil der sich auf das Datum bezieht"""
     doc=nlp(userText)
     Wochentage=["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"]
     MonateValue={
@@ -221,6 +224,7 @@ def getDateText(userText):
         "Dezember":"12"
     }
     userDatum =""
+    #Datum wird für jeden case erkannt und als userDatum returned,einige Fälle Formatieren das Datum bereits
     for token in doc:
         if token.shape_=="dd."or token.shape_=="d."or token.shape_=="d" or token.shape_=="dd"  and token.head.text in MonateValue:
             
@@ -265,13 +269,14 @@ def getDateText(userText):
 
 
 def getLocation():
-    #UNFINISHED Soll Location des Termins Liefern falls Vorhanden
+    #UNFINISHED Soll Location des Termins Liefern falls Vorhanden->Canceled
     for ent in doc.ents:
         if(ent.label_ == "LOC"):
             return ent.text
             
 
 def getTitel(text):
+    """Erkennt den Titel in einer Nutzereingabe"""
     matcher=PhraseMatcher(nlp.vocab)
     term = ["titel"]
     patterns = [nlp.make_doc(text) for text in term]
@@ -287,11 +292,11 @@ def getTitel(text):
 
     if not matches: 
         print("Keinen Titel gefunden was wollen Sie als Titel haben?")
-        #input bla bla into Titel
-#getTitel("erstelle einen Termin um 14 Uhr mit dem Titel Hallo was geht ab")
+       
 
 
 def getUhrzeit(index):
+    """Erkennt die Start und Enduhrzeit(falls vorhanden) für mehere Fälle"""
     uhrzeiten= []
     try:
         for token in doc:
@@ -396,4 +401,4 @@ class Logik(object):
         elif self.intend == "loeschen" and self.art == "Kalender":
              return kalenderLoeschen(str(self.titel))
 
-print(getDateText("Lege einen Termin für den 6 Juni an"))
+

@@ -16,14 +16,15 @@ text="Erstelle einen Termin"
 doc =  nlp(text)
 bereinigt=" ".join([token.text for token in doc if not token.is_stop and not token.is_punct])
 
-print("bereingiter Text:")
-print(bereinigt)
 #Doc mit entfernten Stopwords
 noStopwordDoc=nlp(bereinigt)
 
 tokenListe=[]
 
 def setText(eingabe):
+    """
+    Zur setzen von den Globalen doc und text Variablen. 
+    """
     global text, doc, bereinigt, noStopwordDoc
     text = eingabe
     text=text+"."
@@ -42,9 +43,8 @@ def getTokenList():
     
 def checkActionKind(usereingabe):
     """Überpüft ob Nutzer Aktion für einen Kalender oder Termin anlegen will"""
-    print("nostopword")
-    print(noStopwordDoc)
     setText(usereingabe)
+    # Auskommentiert, da Manche Sätze Kalender nicht als Substantiv erkennt!
     # for token in noStopwordDoc:
     #     if(token.pos_=="NOUN"):
     #         print(token.text)
@@ -58,8 +58,7 @@ def checkActionKind(usereingabe):
     for token in noStopwordDoc:
         if(token.text=="Kalender"):
             return "Kalender"
-        elif(token.lemma_=="Termin"or token.lemma_ == "Meeting"or token.lemma_ =="Treffen"):
-            print("Der TOKEN HIER IST" + token.text)
+        elif(token.lemma_=="Termin"or token.lemma_ == "Meeting"or token.lemma_ =="Treffen"):    
             return "Termin"
         elif(token.text=="Geburtstag"):
             return"Geburtstag"
@@ -103,7 +102,6 @@ def getIntend(userEingabe,kindOfRequest):
     if matches==[]:
         intend=userEingabe[0:10]
         intend=intend[0].lower()+intend[1:]
-        print(intend)
         #Einheitliche returns wenn intend in listOfIntends ist
     if(intend in listOfIntends or len(intend)>7):
             if "lege"in intend.lower() or "erstelle"in intend.lower() or"trage"in intend.lower() or "mache" in intend.lower():
@@ -137,7 +135,6 @@ def calculateWithWeekdays(requestedWeekday):
 
 def getDatum(erkannterTag):
     """Liefert für einen Datumtext das entsprechende Datum im richtigen Format"""
-    print("Parameter für erkannter Tag ist:"+erkannterTag)
     #heutigesDatum
     heute=date.today()
     #globale Variable datumNextWeek in die Ergebis der Methode getDateNextWeek gespeichert wird
@@ -186,7 +183,6 @@ def getDatum(erkannterTag):
     
     #for Schleife die für Pattern match getDateNextWeek aufruft
     for match_id,start,end in matches:
-        print("Pattern wird gematched")
         string_id=nlp.vocab.strings[match_id]            
         span=testDoc[start:end]
         datumNextWeek=getDateNextWeek(span.text)
@@ -195,7 +191,6 @@ def getDatum(erkannterTag):
     #Leeres Array==Kein Pattern gefunden->normaler aufruf über dictonary
     #else->Aufruf der globalen Variable datumNextWeek in die Datum für die nächste Woche gespeichert wurde
     for token in datumNlp:
-        print("Pattern wird nicht gemachted"+str(getDateNextWeek("nächste Woche Montag")))
         if token.shape_=="dd.dd.dddd":
             #Platz zum formatieren des Datums zum google api Standart
             return token.text
@@ -276,7 +271,10 @@ def getLocation():
             
 
 def getTitel(text):
-    """Erkennt den Titel in einer Nutzereingabe"""
+    """
+    Erkennt den Titel in einer Nutzereingabe, anhand des Keyword Titel.
+    Alles nach Titel wird als Titel verwendet
+    """
     matcher=PhraseMatcher(nlp.vocab)
     term = ["titel"]
     patterns = [nlp.make_doc(text) for text in term]
@@ -296,7 +294,10 @@ def getTitel(text):
 
 
 def getUhrzeit(index):
-    """Erkennt die Start und Enduhrzeit(falls vorhanden) für mehere Fälle"""
+    """
+    Erkennt die Start und Enduhrzeit
+    Wenn kein Enduhrzeit angegeben, wird dieses berechnet (Startuhrzeit+30 Minuten)
+    """
     uhrzeiten= []
     try:
         for token in doc:
@@ -321,14 +322,12 @@ class Logik(object):
      pass
     def __init__(self) -> None:
         super().__init__()
-    
-    def ausgeben(self):
-        print("ausgeben aus der Logik Klasse")
-        print(self.datum)
-        print("---")
-        print(type(self.datum))
-        print("---")
+
     def testest(self):
+        """
+        Prüft auf intend und art und bereitet benötigte Werte vor. 
+        Führt die Kalender Methoden mit den jeweiligen Parameter aus
+        """
         datum= self.datum
         if self.intend == "zeige an":
             datumAlsDate = datetime.strptime(datum, "%d" "." "%m" "." "%Y")
@@ -381,12 +380,13 @@ class Logik(object):
             minute = int (datetime.strftime(startUhrzeit,"%M"))
 
         if self.intend == "erstellen" and self.art == "Termin":
-            print("Termin wird angelegt")
             return terminAnlegen(jahr,monat,tag, stunde,minute,endStunde,endMinute,str(self.titel), " ")
         elif self.intend == "bearbeiten" and self.art == "Termin":
             return terminTitelBearbeiten(jahr,monat,tag,stunde,minute,str(self.titel))
         elif self.intend == "verschiebe" and self.art == "Termin":
             return terminVerschiebenNeueUhrzeit(jahr,monat,tag,stunde,minute,neueStunde,neueMinute,endStunde,endMinute )
+        # Methoden termin bearbeiten mit Beschreibung ändern rauskommentiert
+        # Meethode Termin auf anderen Tag und Uhrzeit verschieben rauskommentiert, da Zeitlich nicht zu 100% implementierbar. (Methode würde aber funktionieren, nur fehleranfällig.)
         #      elif self.neueUhrzeit != None:
         #          terminBearbeiten(jahr,monat,tag,stunde,minute,neueStunde,neueMinute,endStunde,endMinute)
         #elif self.intend == "verschieben": # and self.art == "Termin":

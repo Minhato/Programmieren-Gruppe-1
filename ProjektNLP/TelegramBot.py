@@ -177,7 +177,9 @@ def checkDicForMissingValue(ppDict,intend):
     try:
         print(intend)
         if pp.art=="Termin":
-            googleMethodenTermin={'erstellen':['titel','intend','uhrzeit','enduhrzeit','datum'],'zeige an':['datum'],'bearbeiten':['titel','intend','uhrzeit','enduhrzeit','datum'],'loeschen':['uhrzeit','datum'],'verschiebe':['uhrzeit','enduhrzeit','datum']}
+            googleMethodenTermin={'erstellen':['titel','intend','uhrzeit','enduhrzeit','datum'],
+            'zeige an':['datum'],'bearbeiten':['titel','intend','uhrzeit','enduhrzeit','datum'],
+            'loeschen':['uhrzeit','datum'],'verschiebe':['uhrzeit','enduhrzeit','datum']}
             necessaryInput=googleMethodenTermin[intend]
         if pp.art=="Kalender":
             googleMethodenKalender={'erstellen':['titel'],'loeschen':['titel']}

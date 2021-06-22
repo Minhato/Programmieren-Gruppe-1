@@ -166,7 +166,8 @@ def missingValueNachfrage(chat_id, missingValues):
 
 def intendCheck(chat_id,ppDict):
     """Checkt ob ein Intend vorhanden ist,Falls nein,Eingabe über markup"""
-    if(ppDict['intend']==None):
+    intendListe={'erstellen','bearbeiten','loeschen','verschiebe','zeige an'}
+    if(ppDict['intend'] not in intendListe):
         markup = types.ReplyKeyboardMarkup(row_width=2)
         itembtn1 = types.KeyboardButton('zeige an')
         itembtn2 = types.KeyboardButton('erstellen')
